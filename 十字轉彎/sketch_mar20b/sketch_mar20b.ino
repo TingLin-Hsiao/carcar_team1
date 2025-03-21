@@ -6,7 +6,7 @@ int BIN1 = 5;
 int BIN2 = 6;
 //int STBY = 5;
 #define ledPin 13
-#define digitalPin1 32 //前置命令定義 analogPin 來自於 A0
+#define digitalPin1 32  //前置命令定義 analogPin 來自於 A0
 #define digitalPin2 34
 #define digitalPin3 36
 #define digitalPin4 38
@@ -37,7 +37,7 @@ void setup() {
 // }
 
 void MotorWriting(double vL, double vR) {
-  vR=vR*0.935;  
+  vR = vR * 0.93;
   if (vR >= 0) {
     digitalWrite(AIN1, HIGH);
     digitalWrite(AIN2, LOW);
@@ -62,34 +62,39 @@ void MotorWriting(double vL, double vR) {
 
 
 // void uturn(double v,int l3, int l2, int m, int r2, int r3){
-  
+
 // }
 
 void Tracking(double v) {
   int w2 = 1.1;
   int w3 = 1.2;
   int Tp = v;
-  int Kp = Tp*0.5;
+  int Kp = Tp * 0.5;
   int l3 = digitalRead(digitalPin1);
   int l2 = digitalRead(digitalPin2);
   int m = digitalRead(digitalPin3);
   int r2 = digitalRead(digitalPin4);
   int r3 = digitalRead(digitalPin5);
-  double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
-  int powerCorrection = Kp * error;  // ex. Kp = 100, 也與w2 & w3有關
-  int vR = Tp - powerCorrection;     // ex. Tp = 150, 也與w2 & w3有關
-  int vL = Tp + powerCorrection;
-  if (vR > 255) vR = 255;
-  if (vL > 255) vL = 255;
-  if (vR < -255) vR = -255;
-  if (vL < -255) vL = -255;
-  if (     (     (l2==1)  &&    (m==1)  &&     (r2==1)     )    ){     
-    // delay(1000);
-    MotorWriting(-100, 100);
-    
 
-  }
-  else{
+  if (l2 && m && r2) {
+
+    MotorWriting(-80, 80);
+    delay(900);
+  } else {
+    double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
+    double denominator = (l3 + l2 + m + r2 + r3);
+    if (denominator == 0) {
+      error = 0;  // 若所有感測器皆未觸發，則 error 設為 0
+    } else {
+      error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) ;
+    }
+    int powerCorrection = Kp * error;  // ex. Kp = 100, 也與w2 & w3有關
+    int vR = Tp - powerCorrection;     // ex. Tp = 150, 也與w2 & w3有關
+    int vL = Tp + powerCorrection;
+    if (vR > 255) vR = 255;
+    if (vL > 255) vL = 255;
+    if (vR < -255) vR = -255;
+    if (vL < -255) vL = -255;
     MotorWriting(vL, vR);  //Feedback to motors
   }
 }
@@ -102,19 +107,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   // double vl = 30;
   // double vr = 30;
-  double v=150;
+  double v = 80;
   //digitalWrite(STBY, HIGH);
   Tracking(v);
 
-  // MotorWriting(vl,vr);
+  // MotorWriting(150,150);
 }
-
-
-
-
-
-
-
-
-
-
