@@ -5,12 +5,16 @@ int AIN1 = 2;
 int BIN1 = 5;
 int BIN2 = 6;
 //int STBY = 5;
+
+
 #define ledPin 13
 #define digitalPin1 32  //前置命令定義 analogPin 來自於 A0
 #define digitalPin2 34
 #define digitalPin3 36
 #define digitalPin4 38
 #define digitalPin5 40
+int do_list[6]={2,1,3,1,0,4};
+int i=0;
 
 
 
@@ -61,9 +65,32 @@ void MotorWriting(double vL, double vR) {
 }
 
 
-// void uturn(double v,int l3, int l2, int m, int r2, int r3){
+void turn(int t){
+  if(t==0){
+    //leftturn
+    MotorWriting(-80,80);
+    delay(450);
+  }
+  else if(t==1){
+    //uturn
+    MotorWriting(-80,80);
+    delay(900);
+  }
+  else if(t==2){
+    //righturn
+    MotorWriting(80,-80);
+    delay(450);
+  }
+  else if(t==3){
+    MotorWriting(80,80);
+    delay(450);
+  }
+  else if(t>=4){
+    MotorWriting(0,0);
+    delay(10000);
+  }
+}
 
-// }
 
 void Tracking(double v) {
   int w2 = 1.1;
@@ -77,9 +104,14 @@ void Tracking(double v) {
   int r3 = digitalRead(digitalPin5);
 
   if (l2 && m && r2) {
+    while(l2!=0 && r2!=0){
+      MotorWriting(80,80);
+      l2 = digitalRead(digitalPin2);
+      r2 = digitalRead(digitalPin4);
+    }
 
-    MotorWriting(-80, 80);
-    delay(900);
+    turn(do_list[i]);
+    i+=1;
   } else {
     double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
     double denominator = (l3 + l2 + m + r2 + r3);
@@ -99,7 +131,7 @@ void Tracking(double v) {
   }
 }
 
-void uturn();
+//void uturn();
 
 
 
@@ -107,6 +139,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   // double vl = 30;
   // double vr = 30;
+  
   double v = 80;
   //digitalWrite(STBY, HIGH);
   Tracking(v);
