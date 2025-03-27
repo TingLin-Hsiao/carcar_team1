@@ -26,7 +26,7 @@ BT_CMD ask_BT() {
     char cmd;
     if (BT.available()) {
         cmd = BT.read();
-        //Serial.println(cmd);
+        Serial.println(cmd);
         delay(100);
     
 // TODO:
@@ -64,12 +64,26 @@ void send_msg(const char& msg) {
 
 // send UID back through BT(bluetooth serial)
 void send_byte(byte* id, byte& idSize) {
-    for (byte i = 0; i < idSize; i++) {  // Send UID consequently.
+  if (id == nullptr || idSize == 0) {  // Check for invalid UID
+        Serial.println("Error: No valid UID detected!");
+        BT.print("Error: No valid UID");
+        return;
+    }
+  for (byte i = 0; i < idSize; i++) {  // Send UID consequently.
+    if (id[i]<16){
+      // BT.write(byte(0));
       BT.write(id[i]);
     }
+    else{
+      BT.write(id[i]);
+    }
+  }
 #ifdef DEBUG
     Serial.print("Sent id: ");
     for (byte i = 0; i < idSize; i++) {  // Show UID consequently.
+        if (id[i]<16){
+          Serial.print("0");
+        }
         Serial.print(id[i], HEX);
     }
     Serial.println();
