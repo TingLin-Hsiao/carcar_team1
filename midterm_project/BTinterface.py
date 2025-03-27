@@ -1,5 +1,7 @@
 import logging
 from typing import Optional
+import time
+import threading
 
 from BT import Bluetooth
 
@@ -20,20 +22,44 @@ class BTInterface:
                 self.bt.disconnect()
                 quit()
             port = input("PC bluetooth port name: ")
-
+        # Start listening for UIDs in a background thread
+        self.listening = True
+        self.listener_thread = threading.Thread(target=self.listen_for_uid, daemon=True)
+        self.listener_thread.start()
+        
     def start(self):
         input("Press enter to start.")
         self.bt.serial_write_string("s")
 
     def get_UID(self):
-        return self.bt.serial_read_byte()
+        """Read and return the UID from Arduino (if available)."""
+        uid = self.bt.serial_read_byte()
+        if uid:
+            print(f"Received UID: {f'{uid}'.upper()}")
+        return None
+    
+    def listen_for_uid(self):
+        """Continuously listen for UID messages from Arduino."""
+        while self.listening:
+            uid = self.get_UID()
+            if uid:
+                log.info(uid)
+            time.sleep(0.5)  # Avoid excessive CPU usage
 
     def send_action(self, dirc):
-        # TODO : send the action to car
-        return
+        valid_commands = {"F", "B", "L", "R", "S"}  # Define allowed commands
+        if dirc in valid_commands:
+            self.bt.serial_write_string(dirc)
+            log.info(f"Sent action: {dirc}")
+            print(f'commmand: {dirc}\n')
+            
+        else:
+            log.error(f"Invalid action: {dirc}")
+        return 
 
     def end_process(self):
         self.bt.serial_write_string("e")
+        self.listening = False
         self.bt.disconnect()
 
 
