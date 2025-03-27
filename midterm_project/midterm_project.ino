@@ -37,13 +37,14 @@
 #define RST_PIN 9                 // 讀卡機的重置腳位
 #define SS_PIN 53                  // 晶片選擇腳位
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // 建立MFRC522物件
-// HardwareSerial Serial1(10,11);
-/*===========================define pin & create module object===========================*/
 
+#include<SoftwareSerial.h>
+/*===========================define pin & create module object===========================*/
+SoftwareSerial BT(10,11);
 /*============setup============*/
 void setup() {
     // bluetooth initialization
-    Serial1.begin(9600);
+    BT.begin(9600);
     // Serial window
     Serial.begin(9600);
     // RFID initial
@@ -94,10 +95,15 @@ void loop() {
     else
         Search();
     SetState();
+
 }
 
 void SetState() {
     // TODO:
+    _cmd=ask_BT();
+
+    //Serial.println(BT.available());
+    //delay(1000);
     switch (_cmd) {
         case FORWARD:
             state = true;
@@ -130,5 +136,6 @@ void Search() {
     // TODO: let your car search graph(maze) according to bluetooth command from computer(python
     // code)
     // tracking(l2,l1,m,r1,r2);
+
 }
 /*===========================define function===========================*/
