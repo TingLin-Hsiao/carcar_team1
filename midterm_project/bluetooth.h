@@ -8,6 +8,8 @@
 
 /*if you have no idea how to start*/
 /*check out what you have learned from week 2*/
+#include<SoftwareSerial.h>
+extern SoftwareSerial BT;
 
 enum BT_CMD {
     NOTHING,
@@ -22,15 +24,17 @@ enum BT_CMD {
 BT_CMD ask_BT() {
     BT_CMD message = NOTHING;
     char cmd;
-    if (Serial1.available()) {
-        cmd = Serial1.read();
-        // Serial.print(cmd);
+    if (BT.available()) {
+        cmd = BT.read();
+        //Serial.println(cmd);
+        delay(100);
+    
 // TODO:
 // 1. get cmd from BT(bluetooth serial)
 // 2. link bluetooth message to your own command type
 #ifdef DEBUG
-        Serial.print("cmd : ");
-        Serial.println(cmd);
+        //Serial.print("cmd : ");
+        //Serial.println(cmd);
 #endif
         switch (cmd) {
             case 'F': message = FORWARD; break;
@@ -41,6 +45,8 @@ BT_CMD ask_BT() {
             default: message = NOTHING; break;
         }
     }
+    
+    
     return message;
 }  // ask_BT
 
@@ -49,7 +55,7 @@ BT_CMD ask_BT() {
 // (but need to convert to byte type)
 void send_msg(const char& msg) {
     // TODO:
-    Serial1.print(msg);
+    BT.print(msg);
 #ifdef DEBUG
     Serial.print("Sent message: ");
     Serial.println(msg);
@@ -59,7 +65,7 @@ void send_msg(const char& msg) {
 // send UID back through BT(bluetooth serial)
 void send_byte(byte* id, byte& idSize) {
     for (byte i = 0; i < idSize; i++) {  // Send UID consequently.
-      Serial1.write(id[i]);
+      BT.write(id[i]);
     }
 #ifdef DEBUG
     Serial.print("Sent id: ");
