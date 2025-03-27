@@ -14,29 +14,30 @@
 
 /*===========================define pin & create module object================================*/
 // BlueTooth
-// BT connect to Serial1 (Hardware Serial)
+// BT connect to BT (Hardware Serial)
 // Mega               HC05
 // Pin  (Function)    Pin
 // 18    TX       ->  RX
 // 19    RX       <-  TX
 // TB6612, 請按照自己車上的接線寫入腳位(左右不一定要跟註解寫的一樣)
 // TODO: 請將腳位寫入下方
-#define MotorR_I1 0     // 定義 A1 接腳（右）
-#define MotorR_I2 0     // 定義 A2 接腳（右）
-#define MotorR_PWMR 0  // 定義 ENA (PWM調速) 接腳
-#define MotorL_I3 0     // 定義 B1 接腳（左）
-#define MotorL_I4 0     // 定義 B2 接腳（左）
-#define MotorL_PWML 0  // 定義 ENB (PWM調速) 接腳
+#define MotorR_I1 2     // 定義 A1 接腳（右）
+#define MotorR_I2 3     // 定義 A2 接腳（右）
+#define MotorR_PWMR 13  // 定義 ENA (PWM調速) 接腳
+#define MotorL_I3 5     // 定義 B1 接腳（左）
+#define MotorL_I4 6     // 定義 B2 接腳（左）
+#define MotorL_PWML 12  // 定義 ENB (PWM調速) 接腳
 // 循線模組, 請按照自己車上的接線寫入腳位
-#define IRpin_LL 0
-#define IRpin_L 0
-#define IRpin_M 0
-#define IRpin_R 0
-#define IRpin_RR 0
+#define IRpin_LL 32
+#define IRpin_L 34
+#define IRpin_M 36
+#define IRpin_R 38
+#define IRpin_RR 40
 // RFID, 請按照自己車上的接線寫入腳位
-#define RST_PIN 0                 // 讀卡機的重置腳位
-#define SS_PIN 0                  // 晶片選擇腳位
+#define RST_PIN 9                 // 讀卡機的重置腳位
+#define SS_PIN 53                  // 晶片選擇腳位
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // 建立MFRC522物件
+// HardwareSerial Serial1(10,11);
 /*===========================define pin & create module object===========================*/
 
 /*============setup============*/
@@ -97,6 +98,30 @@ void loop() {
 
 void SetState() {
     // TODO:
+    switch (_cmd) {
+        case FORWARD:
+            state = true;
+            MotorWriting(_Tp, _Tp);
+            break;
+        case BACKWARD:
+            state = true;
+            MotorWriting(-_Tp, -_Tp);
+            break;
+        case LEFT:
+            state = true;
+            MotorWriting(-_Tp, _Tp);
+            break;
+        case RIGHT:
+            state = true;
+            MotorWriting(_Tp, -_Tp);
+            break;
+        case STOP:
+            state = false;
+            MotorWriting(0, 0);
+            break;
+        default:
+            break;
+    }
     // 1. Get command from bluetooth
     // 2. Change state if need
 }
@@ -104,5 +129,6 @@ void SetState() {
 void Search() {
     // TODO: let your car search graph(maze) according to bluetooth command from computer(python
     // code)
+    // tracking(l2,l1,m,r1,r2);
 }
 /*===========================define function===========================*/

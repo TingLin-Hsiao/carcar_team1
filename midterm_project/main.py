@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 TEAM_NAME = "YOUR_TEAM_NAME"
 SERVER_URL = "http://140.112.175.18:5000/"
 MAZE_FILE = "data/small_maze.csv"
-BT_PORT = ""
+BT_PORT = "COM11"
 
 
 def parse_args():

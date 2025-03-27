@@ -16,7 +16,27 @@ int extern _Tp;
 
 // Write the voltage to motor.
 void MotorWriting(double vL, double vR) {
-    // TODO: use TB6612 to control motor voltage & direction
+    vR = vR * 0.93;
+  if (vR >= 0) {
+    digitalWrite(MotorR_I1, HIGH);
+    digitalWrite(MotorR_I2, LOW);
+    //這邊的Motor第幾個對應到的High/Low是助教的車對應到的，請自己測試自己車該怎麼填！
+  } else if (vR < 0) {
+    digitalWrite(MotorR_I1, LOW);
+    digitalWrite(MotorR_I2, HIGH);
+    vR = -vR;  //因為analogWrite只吃正數，所以如果本來是負數，就要乘-1
+  }
+  if (vL >= 0) {
+    digitalWrite(MotorL_I3, LOW);
+    digitalWrite(MotorL_I4, HIGH);
+    //這邊的Motor第幾個對應到的High/Low是助教的車對應到的，請自己測試自己車該怎麼填！
+  } else if (vL < 0) {
+    digitalWrite(MotorL_I3, HIGH);
+    digitalWrite(MotorL_I4, LOW);
+    vL = -vL;  //因為analogWrite只吃正數，所以如果本來是負數，就要乘-1
+  }
+  analogWrite(MotorL_PWML, (int)vL);
+  analogWrite(MotorR_PWMR, (int)vR);
 }  // MotorWriting
 
 // Handle negative motor_PWMR value.
