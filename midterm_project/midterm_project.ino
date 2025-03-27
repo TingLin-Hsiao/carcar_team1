@@ -96,6 +96,16 @@ void loop() {
         Search();
     SetState();
 
+
+    byte idSize;
+    byte* uid = rfid(idSize);  // Call rfid() to check for a card
+
+    if (uid) {  // If an RFID card is detected
+        send_byte(uid,idSize);
+        delay(1000);
+    }
+
+    delay(100);  // Small delay to avoid excessive CPU usage
 }
 
 void SetState() {
