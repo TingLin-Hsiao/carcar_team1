@@ -4,6 +4,7 @@ import os
 import sys
 import time
 
+
 import numpy as np
 import pandas
 from BTinterface import BTInterface
@@ -17,10 +18,10 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
-TEAM_NAME = "YOUR_TEAM_NAME"
-SERVER_URL = "http://140.112.175.18:5000/"
+TEAM_NAME = "TeamName2"
+SERVER_URL = "http://140.112.175.18:4000/"
 MAZE_FILE = "data/small_maze.csv"
-BT_PORT = "COM11"
+BT_PORT = "COM9"
 
 
 def parse_args():
@@ -31,27 +32,35 @@ def parse_args():
     parser.add_argument(
         "--team-name", default=TEAM_NAME, help="Your team name", type=str
     )
-    parser.add_argument("--server-url", default=SERVER_URL, help="Server URL", type=str)
+    #parser.add_argument("--server-url", default=SERVER_URL, help="Server URL", type=str)
     return parser.parse_args()
 
 
-def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
+def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     maze = Maze(maze_file)
-    point = ScoreboardServer(team_name, server_url)
-    # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
-    interface = BTInterface(port=bt_port)
-    # TODO : Initialize necessary variables
+    # point = ScoreboardServer(team_name, server_url)
+    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+    try:
+        interface = BTInterface(port=bt_port)
+        # TODO : Initialize necessary variables
 
-    if mode == "0":
-        log.info("Mode 0: For treasure-hunting")
-        # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
+        if mode == "0":
+            log.info("Mode 0: For treasure-hunting")
+            # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
 
-    elif mode == "1":
-        log.info("Mode 1: Self-testing mode.")
-        # TODO: You can write your code to test specific function.
+        elif mode == "1":
+            log.info("Mode 1: Self-testing mode.")
+            # TODO: You can write your code to test specific function.
+            while True:
+                dirc=input()
+                interface.send_action(dirc)
+                time.sleep(0.5)
 
-    else:
-        log.error("Invalid mode")
+        else:
+            log.error("Invalid mode")
+            sys.exit(1)
+    except:
+        print("not connected")
         sys.exit(1)
 
 
