@@ -12,12 +12,12 @@
 extern SoftwareSerial BT;
 
 enum BT_CMD {
-    NOTHING,
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT,
-    STOP
+    NOTHING = 0,
+    FORWARD = 1,
+    BACKWARD = 2,
+    LEFT = 3,
+    RIGHT = 4,
+    STOP = 5
     // TODO: add your own command type here
 };
 
@@ -49,6 +49,7 @@ BT_CMD ask_BT() {
     
     return message;
 }  // ask_BT
+
 
 // send msg back through BT(bluetooth serial)
 // can use send_byte alternatively to send msg back
