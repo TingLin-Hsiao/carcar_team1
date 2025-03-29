@@ -11,32 +11,32 @@
 /*feel free to add your own function for convenience*/
 
 /*===========================import variable===========================*/
-int extern _Tp;
+int extern TP;
 /*===========================import variable===========================*/
 
 // Write the voltage to motor.
 void MotorWriting(double vL, double vR) {
     vR = vR * 0.93;
   if (vR >= 0) {
-    digitalWrite(MotorR_I1, HIGH);
-    digitalWrite(MotorR_I2, LOW);
+    digitalWrite(AIN1, HIGH);
+    digitalWrite(AIN2, LOW);
     //這邊的Motor第幾個對應到的High/Low是助教的車對應到的，請自己測試自己車該怎麼填！
   } else if (vR < 0) {
-    digitalWrite(MotorR_I1, LOW);
-    digitalWrite(MotorR_I2, HIGH);
+    digitalWrite(AIN1, LOW);
+    digitalWrite(AIN2, HIGH);
     vR = -vR;  //因為analogWrite只吃正數，所以如果本來是負數，就要乘-1
   }
   if (vL >= 0) {
-    digitalWrite(MotorL_I3, LOW);
-    digitalWrite(MotorL_I4, HIGH);
+    digitalWrite(BIN1, LOW);
+    digitalWrite(BIN2, HIGH);
     //這邊的Motor第幾個對應到的High/Low是助教的車對應到的，請自己測試自己車該怎麼填！
   } else if (vL < 0) {
-    digitalWrite(MotorL_I3, HIGH);
-    digitalWrite(MotorL_I4, LOW);
+    digitalWrite(BIN1, HIGH);
+    digitalWrite(BIN2, LOW);
     vL = -vL;  //因為analogWrite只吃正數，所以如果本來是負數，就要乘-1
   }
-  analogWrite(MotorL_PWML, (int)vL);
-  analogWrite(MotorR_PWMR, (int)vR);
+  analogWrite(PWMB, (int)vL);
+  analogWrite(PWMA, (int)vR);
 }  // MotorWriting
 
 // Handle negative motor_PWMR value.
@@ -45,20 +45,44 @@ void MotorInverter(int motor, bool& dir) {
 }  // MotorInverter
 
 // P/PID control Tracking
-void tracking(int l2, int l1, int m0, int r1, int r2) {
-    // TODO: find your own parameters!
-    double _w0;  //
-    double _w1;  //
-    double _w2;  //
-    double _Kp;  // p term parameter
-    double _Kd;  // d term parameter (optional)
-    double _Ki;  // i term parameter (optional) (Hint: 不要調太大)
-    double error = l2 * _w2 + l1 * _w1 + m0 * _w0 + r1 * (-_w1) + r2 * (-_w2);
-    double vR, vL;  // 馬達左右轉速原始值(從PID control 計算出來)。Between -255 to 255.
-    double adj_R = 1, adj_L = 1;  // 馬達轉速修正係數。MotorWriting(_Tp,_Tp)如果歪掉就要用參數修正。
 
-    // TODO: complete your P/PID tracking code
 
-    // end TODO
-    MotorWriting(adj_L * vL, adj_R * vR);
-}  // tracking
+// void Tracking(double v) {
+//   int w2 = 1.1;
+//   int w3 = 1.2;
+//   int Tp = v;
+//   int Kp = Tp * 0.5;
+//   int l3 = digitalRead(digitalPin1);
+//   int l2 = digitalRead(digitalPin2);
+//   int m = digitalRead(digitalPin3);
+//   int r2 = digitalRead(digitalPin4);
+//   int r3 = digitalRead(digitalPin5);
+
+  
+//     while(l2!=0 && r2!=0){
+//       MotorWriting(80,80);
+//       l2 = digitalRead(digitalPin2);
+//       r2 = digitalRead(digitalPin4);
+//     }
+
+
+//   } else {
+//     double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
+//     double denominator = (l3 + l2 + m + r2 + r3);
+//     if (denominator == 0) {
+//       error = 0;  // 若所有感測器皆未觸發，則 error 設為 0
+//     } else {
+//       error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) ;
+//     }
+//     int powerCorrection = Kp * error;  // ex. Kp = 100, 也與w2 & w3有關
+//     int vR = Tp - powerCorrection;     // ex. Tp = 150, 也與w2 & w3有關
+//     int vL = Tp + powerCorrection;
+//     if (vR > 255) vR = 255;
+//     if (vL > 255) vL = 255;
+//     if (vR < -255) vR = -255;
+//     if (vL < -255) vL = -255;
+//     MotorWriting(vL, vR);  //Feedback to motors
+//   }
+// }
+
+
