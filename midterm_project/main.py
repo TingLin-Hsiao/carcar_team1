@@ -9,7 +9,7 @@ import numpy as np
 import pandas
 from BTinterface import BTInterface
 from maze import Action, Maze
-from score import ScoreboardServer, ScoreboardFake
+#from score import ScoreboardServer, ScoreboardFake
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -37,9 +37,9 @@ def parse_args():
 
 
 def main(mode: int, bt_port: str, team_name: str, maze_file: str):
-    maze = Maze(maze_file)
+    #maze = Maze(maze_file)
     # point = ScoreboardServer(team_name, server_url)
-    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+    #point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
     try:
         interface = BTInterface(port=bt_port)
         # TODO : Initialize necessary variables
