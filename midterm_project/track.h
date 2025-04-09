@@ -12,6 +12,7 @@
 
 /*===========================import variable===========================*/
 int extern TP;
+// extern int digitalPin1;
 /*===========================import variable===========================*/
 
 // Write the voltage to motor.
@@ -58,14 +59,45 @@ void MotorInverter(int motor, bool& dir) {
 //   int r2 = digitalRead(digitalPin4);
 //   int r3 = digitalRead(digitalPin5);
 
-  
+//   if (l2 && m && r2) {
 //     while(l2!=0 && r2!=0){
 //       MotorWriting(80,80);
 //       l2 = digitalRead(digitalPin2);
 //       r2 = digitalRead(digitalPin4);
 //     }
-
-
+//     BT_CMD cmd = commandQueue.peek();
+//     Serial.println(cmd);
+//     switch (cmd) {
+//         case FORWARD:
+//             //state = true;
+//             MotorWriting(TP, TP);
+//             delay(450);
+//             break;
+//         case BACKWARD:
+//             //state = true;
+//             MotorWriting(-TP, -TP);
+//             delay(450);
+//             break;
+//         case LEFT:
+//             //state = true;
+//             MotorWriting(-TP, TP);
+//             delay(450);
+//             break;
+//         case RIGHT:
+//             //state = true;
+//             MotorWriting(TP, -TP);
+//             delay(450);
+//             break;
+//         case STOP:
+//             state = false;
+//             MotorWriting(0, 0);
+//             break;
+//         default:
+//             break;
+      
+//     }
+//     commandQueue.dequeue();
+    
 //   } else {
 //     double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
 //     double denominator = (l3 + l2 + m + r2 + r3);

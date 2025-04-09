@@ -80,7 +80,8 @@ void setup() {
 
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
-int TP = 90;                                // set your own value for motor power
+int TP = 80;       
+//int yee=0;                         // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
 BT_CMD _cmd = NOTHING;  // enum for bluetooth message, reference in bluetooth.h line 2
@@ -100,6 +101,7 @@ void loop() {
         Search();
     SetState();
 
+    //Serial.println(yee++);
 
     byte idSize;
     byte* uid = rfid(idSize);  // Call rfid() to check for a card
@@ -109,7 +111,7 @@ void loop() {
         delay(100);
     }
 
-    delay(100);  // Small delay to avoid excessive CPU usage
+    //delay(50);  // Small delay to avoid excessive CPU usage
 }
 
 
@@ -139,6 +141,13 @@ void Search() {
 
   if (l2 && m && r2) {
     while(l2!=0 && r2!=0){
+      byte idSize;
+      byte* uid = rfid(idSize);  // Call rfid() to check for a card
+      // Serial.println(*uid);
+      if (uid) {  // If an RFID card is detected
+        send_byte(uid,idSize);
+        delay(100);
+      }
       MotorWriting(80,80);
       l2 = digitalRead(digitalPin2);
       r2 = digitalRead(digitalPin4);
@@ -149,22 +158,22 @@ void Search() {
         case FORWARD:
             //state = true;
             MotorWriting(TP, TP);
-            delay(450);
+            delay(380);
             break;
         case BACKWARD:
             //state = true;
             MotorWriting(-TP, TP);
-            delay(900);
+            delay(830);
             break;
         case LEFT:
             //state = true;
             MotorWriting(-TP, TP);
-            delay(450);
+            delay(380);
             break;
         case RIGHT:
             //state = true;
             MotorWriting(TP, -TP);
-            delay(450);
+            delay(380);
             break;
         case STOP:
             state = false;

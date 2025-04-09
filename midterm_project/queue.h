@@ -41,7 +41,7 @@ public:
     // Remove an item from the queue
     bool dequeue() {
         if (isEmpty()) {
-            return false; // Queue is empty, cannot dequeue
+            return -1; // Queue is empty, cannot dequeue
         }
         front = (front + 1) % SIZE; // Wrap around if necessary
         count--;

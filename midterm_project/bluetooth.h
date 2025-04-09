@@ -26,7 +26,7 @@ BT_CMD ask_BT() {
     char cmd;
     if (BT.available()) {
         cmd = BT.read();
-        Serial.println(cmd);
+        if(cmd) Serial.println(cmd);
         delay(100);
     
 // TODO:
@@ -57,10 +57,10 @@ BT_CMD ask_BT() {
 void send_msg(const char& msg) {
     // TODO:
     BT.print(msg);
-#ifdef DEBUG
-    Serial.print("Sent message: ");
-    Serial.println(msg);
-#endif
+// #ifdef DEBUG
+//     Serial.print("Sent message: ");
+//     Serial.println(msg);
+// #endif
 }  // send_msg
 
 // send UID back through BT(bluetooth serial)

@@ -18,10 +18,12 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
-TEAM_NAME = "TeamName2"
+TEAM_NAME = "TeamName1"
 SERVER_URL = "http://140.112.175.18:4000/"
 MAZE_FILE = "data/small_maze.csv"
-BT_PORT = "COM9"
+BT_PORT = "COM11"
+
+
 
 
 def parse_args():
