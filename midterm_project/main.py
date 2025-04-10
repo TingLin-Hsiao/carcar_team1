@@ -65,7 +65,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
             while True:
                 dir = input()
                 interface.send_action(dir)
-                time.sleep(0.5)
+                time.sleep(0.1)
 
         else:
             log.error("Invalid mode")
