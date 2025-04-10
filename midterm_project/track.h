@@ -12,7 +12,7 @@
 
 /*===========================import variable===========================*/
 #include "pin_define.h"
-int extern TP;
+int extern v;
 /*===========================import variable===========================*/
 
 // Write the voltage to motor.

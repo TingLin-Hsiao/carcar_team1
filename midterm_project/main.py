@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 import time
-
+import BFS
 
 import numpy as np
 import pandas
@@ -53,9 +53,18 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
         elif mode == "1":
             log.info("Mode 1: Self-testing mode.")
             # TODO: You can write your code to test specific function.
-            while True:
-                dirc=input()
+            path_list=[1,4,7,5]
+            for i in range(len(path_list)-1):
+                start = path_list[i]
+                goal = path_list[i+1]
+
+                dirc=BFS.action_list(start, goal, "maze.csv")
                 interface.send_action(dirc)
+
+            interface.send_action("S")
+            while True:
+                dir = input()
+                interface.send_action(dir)
                 time.sleep(0.5)
 
         else:

@@ -31,27 +31,6 @@ graph_direction = {
     12: {'e':9,'n':11},
 }
 '''
-df = pd.read_csv("maze (2).csv")
-df.columns = ["index", "North", "South", "West", "East", "ND", "SD", "WD", "ED"]
-df = df[df["index"] != "index"]
-df["index"] = df["index"].astype(int)
-
-graph = {}
-graph_direction = {}
-graph_length = {}
-for _, row in df.iterrows():
-    node = int(row["index"])
-    neighbors = {}
-    directions = {}
-    for dir_key, dist_key ,short in zip(["North", "South", "West", "East"], ["ND", "SD", "WD", "ED"],["n", "s", "w", "e"]):
-        if pd.notna(row[dir_key]) and pd.notna(row[dist_key]):
-            neighbor = int(row[dir_key])
-            distance = int(row[dist_key])
-            neighbors[neighbor] = distance
-            directions[short] = neighbor
-    graph[node] = neighbors
-    graph_direction[node] = directions
-    
 def  bfs(graph, start, goal):
     queue = deque([(start, [start])])
     visited = set() 
@@ -66,13 +45,6 @@ def  bfs(graph, start, goal):
                 queue.append((neighbor, path + [neighbor]))
                 visited.add(neighbor)
     return None
-start_node = 3
-goal_node = 45
-    
-shortest_path = bfs(graph, start_node, goal_node)
-if shortest_path!=-1:
-    shortest_distance = len(shortest_path)-1
-
 def path_to_directions(path, graph_directions):
     directions = []
     facing = None
@@ -84,28 +56,26 @@ def path_to_directions(path, graph_directions):
         for dir_name, neighbor in graph_directions.get(current, {}).items():
             if neighbor == nxt:
                 if i == 0:
-                    directions.append("front")
+                    directions.append("F")
                     facing = dir_name
                 else:
                     directions.append(get_relative_direction(facing, dir_name))
                     facing = dir_name
                 break
     return directions
-
-direction_order = ['n', 'e', 's', 'w']
-
 def get_relative_direction(facing, target):
+    direction_order = ['n', 'e', 's', 'w']
     f_idx = direction_order.index(facing)
     t_idx = direction_order.index(target)
     diff = (t_idx - f_idx) % 4
     if diff == 0:
-        return "front"
+        return "F"
     elif diff == 1:
-        return "right"
+        return "R"
     elif diff == 2:
-        return "back"
+        return "B"
     elif diff == 3:
-        return "left"
+        return "L"
 def total_distance(path, graph):
     total = 0
     for i in range(len(path) - 1):
@@ -113,18 +83,62 @@ def total_distance(path, graph):
         next_node = path[i + 1]
         total += graph[current][next_node]
     return total
+
+def action_list(start_node, goal_node, maze_file):
+    df = pd.read_csv(maze_file)
+    df.columns = ["index", "North", "South", "West", "East", "ND", "SD", "WD", "ED"]
+    df = df[df["index"] != "index"]
+    df["index"] = df["index"].astype(int)
+
+    graph = {}
+    graph_direction = {}
+    graph_length = {}
+    for _, row in df.iterrows():
+        node = int(row["index"])
+        neighbors = {}
+        directions = {}
+        for dir_key, dist_key ,short in zip(["North", "South", "West", "East"], ["ND", "SD", "WD", "ED"],["n", "s", "w", "e"]):
+            if pd.notna(row[dir_key]) and pd.notna(row[dist_key]):
+                neighbor = int(row[dir_key])
+                distance = int(row[dist_key])
+                neighbors[neighbor] = distance
+                directions[short] = neighbor
+        graph[node] = neighbors
+        graph_direction[node] = directions    
+        
+    shortest_path = bfs(graph, start_node, goal_node)
+    if shortest_path!=-1:
+        shortest_distance = len(shortest_path)-1
+
+
+
+
+        
+    # print ("enter starting node: ", start_node)
+    # print ("enter end node: ", goal_node)
+
+
+    if (len(shortest_path)!=0):
+        shortest_distance = len(shortest_path) - 1
+        # print("shortest path: ", shortest_path)
+        # print("shortest distance: ", shortest_distance)
+        direction_list = path_to_directions(shortest_path, graph_direction)
+        # print("direction：", direction_list)
+        # print("total distance: ", total_distance(shortest_path, graph))
+        direction_list.append('B')
+        direction_list.pop(0)
+        return direction_list
+
+    else:
+        print("失敗了, yeeha")
+
+
+# path_list=[1,4,7,5]
+# for i in range(len(path_list)-1):
+#     start = path_list[i]
+#     goal = path_list[i+1]
+
+#     print(action_list(start, goal, "maze.csv"))
+
     
-print ("enter starting node: ", start_node)
-print ("enter end node: ", goal_node)
-
-if (len(shortest_path)!=0):
-    shortest_distance = len(shortest_path) - 1
-    print("shortest path: ", shortest_path)
-    print("shortest distance: ", shortest_distance)
-    direction_list = path_to_directions(shortest_path, graph_direction)
-    print("direction：", direction_list)
-    print("total distance: ", total_distance(shortest_path, graph))
-else:
-    print("失敗了, yeeha")
-
     

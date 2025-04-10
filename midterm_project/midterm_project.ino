@@ -82,7 +82,7 @@ void setup() {
 
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
-int v = 80;       
+int v = 200;       
 //int yee=0;                         // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
@@ -124,7 +124,7 @@ void Search() {
     // TODO: let your car search graph(maze) according to bluetooth command from computer(python
     // code)
     // tracking(l2,l1,m,r1,r2);
-  int Tp = 80;
+  int Tp = v;
   int Kp = Tp * 0.5;
   int l3 = digitalRead(digitalPin1);
   int l2 = digitalRead(digitalPin2);
@@ -135,7 +135,7 @@ void Search() {
   if (l2 && m && r2) {
     while(l2!=0 && r2!=0){
       CheckRFID();
-      MotorWriting(80,80);
+      MotorWriting(v,v);
       l2 = digitalRead(digitalPin2);
       r2 = digitalRead(digitalPin4);
     }
@@ -165,22 +165,22 @@ void NextAction(double v){
       case FORWARD:
           //state = true;
           MotorWriting(v, v);
-          delay(380);
+          delay(280);
           break;
       case BACKWARD:
           //state = true;
           MotorWriting(-v, v);
-          delay(830);
+          delay(560);
           break;
       case LEFT:
           //state = true;
           MotorWriting(-v, v);
-          delay(380);
+          delay(280);
           break;
       case RIGHT:
           //state = true;
           MotorWriting(v, -v);
-          delay(380);
+          delay(280);
           break;
       case STOP:
           state = false;
