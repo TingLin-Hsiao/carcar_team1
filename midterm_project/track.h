@@ -11,8 +11,8 @@
 /*feel free to add your own function for convenience*/
 
 /*===========================import variable===========================*/
+#include "pin_define.h"
 int extern TP;
-// extern int digitalPin1;
 /*===========================import variable===========================*/
 
 // Write the voltage to motor.
@@ -47,6 +47,33 @@ void MotorInverter(int motor, bool& dir) {
 
 // P/PID control Tracking
 
+void Tracking(double v){
+  int w2 = 1.1;
+  int w3 = 1.2;
+  int Tp = v;
+  int Kp = Tp * 0.5;
+  int l3 = digitalRead(digitalPin1);
+  int l2 = digitalRead(digitalPin2);
+  int m  = digitalRead(digitalPin3);
+  int r2 = digitalRead(digitalPin4);
+  int r3 = digitalRead(digitalPin5);
+  double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
+  double denominator = (l3 + l2 + m + r2 + r3);
+
+  if (denominator == 0) {
+    error = 0;  // 若所有感測器皆未觸發，則 error 設為 0
+  } else {
+    error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) ;
+  }
+  int powerCorrection = Kp * error;  // ex. Kp = 100, 也與w2 & w3有關
+  int vR = Tp - powerCorrection;     // ex. Tp = 150, 也與w2 & w3有關
+  int vL = Tp + powerCorrection;
+  if (vR > 255) vR = 255;
+  if (vL > 255) vL = 255;
+  if (vR < -255) vR = -255;
+  if (vL < -255) vL = -255;
+  MotorWriting(vL, vR);  //Feedback to motors
+}
 
 // void Tracking(double v) {
 //   int w2 = 1.1;

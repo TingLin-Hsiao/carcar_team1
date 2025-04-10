@@ -48,13 +48,14 @@ class BTInterface:
 
     def send_action(self, dirc):
         valid_commands = {"F", "B", "L", "R", "S"}  # Define allowed commands
-        if dirc in valid_commands:
-            self.bt.serial_write_string(dirc)
-            log.info(f"Sent action: {dirc}")
-            print(f'commmand: {dirc}\n')
-            
-        else:
-            log.error(f"Invalid action: {dirc}")
+        for i in dirc:
+            if i in valid_commands:
+                self.bt.serial_write_string(i)
+                log.info(f"Sent action: {i}")
+                print(f'commmand: {i}\n')
+                
+            else:
+                log.error(f"Invalid action: {dirc}")
         return 
 
     def end_process(self):

@@ -71,16 +71,18 @@ void setup() {
 /*============setup============*/
 
 /*=====Import header files=====*/
+#include "pin_define.h"
 #include "RFID.h"
 #include "node.h"
 #include "track.h"
 #include "bluetooth.h"
 #include "queue.h"
+
 /*=====Import header files=====*/
 
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
-int TP = 80;       
+int v = 80;       
 //int yee=0;                         // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
@@ -91,6 +93,8 @@ Queue<BT_CMD,100> commandQueue;
 /*===========================declare function prototypes===========================*/
 void Search();    // search graph
 void SetState();  // switch the state
+void CheckRFID();      // 
+void NextAction(double v);
 /*===========================declare function prototypes===========================*/
 
 /*===========================define function===========================*/
@@ -101,20 +105,10 @@ void loop() {
         Search();
     SetState();
 
-    
+    CheckRFID();
     //Serial.println(yee++);
-
-    byte idSize;
-    byte* uid = rfid(idSize);  // Call rfid() to check for a card
-
-    if (uid) {  // If an RFID card is detected
-        send_byte(uid,idSize);
-        delay(100);
-    }
-
     //delay(50);  // Small delay to avoid excessive CPU usage
 }
-
 
 
 void SetState() {
@@ -130,8 +124,6 @@ void Search() {
     // TODO: let your car search graph(maze) according to bluetooth command from computer(python
     // code)
     // tracking(l2,l1,m,r1,r2);
-  int w2 = 1.1;
-  int w3 = 1.2;
   int Tp = 80;
   int Kp = Tp * 0.5;
   int l3 = digitalRead(digitalPin1);
@@ -142,67 +134,62 @@ void Search() {
 
   if (l2 && m && r2) {
     while(l2!=0 && r2!=0){
-      byte idSize;
-      byte* uid = rfid(idSize);  // Call rfid() to check for a card
-      // Serial.println(*uid);
-      if (uid) {  // If an RFID card is detected
-        send_byte(uid,idSize);
-        delay(100);
-      }
+      CheckRFID();
       MotorWriting(80,80);
       l2 = digitalRead(digitalPin2);
       r2 = digitalRead(digitalPin4);
     }
-    BT_CMD cmd = commandQueue.peek();
-    Serial.println(cmd);
-    switch (cmd) {
-        case FORWARD:
-            //state = true;
-            MotorWriting(TP, TP);
-            delay(380);
-            break;
-        case BACKWARD:
-            //state = true;
-            MotorWriting(-TP, TP);
-            delay(830);
-            break;
-        case LEFT:
-            //state = true;
-            MotorWriting(-TP, TP);
-            delay(380);
-            break;
-        case RIGHT:
-            //state = true;
-            MotorWriting(TP, -TP);
-            delay(380);
-            break;
-        case STOP:
-            state = false;
-            MotorWriting(0, 0);
-            break;
-        default:
-            break;
-      
-    }
-    commandQueue.dequeue();
-    
+    NextAction(v);
   } else {
-    double error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) / (l3 + l2 + m + r2 + r3);
-    double denominator = (l3 + l2 + m + r2 + r3);
-    if (denominator == 0) {
-      error = 0;  // 若所有感測器皆未觸發，則 error 設為 0
-    } else {
-      error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) ;
-    }
-    int powerCorrection = Kp * error;  // ex. Kp = 100, 也與w2 & w3有關
-    int vR = Tp - powerCorrection;     // ex. Tp = 150, 也與w2 & w3有關
-    int vL = Tp + powerCorrection;
-    if (vR > 255) vR = 255;
-    if (vL > 255) vL = 255;
-    if (vR < -255) vR = -255;
-    if (vL < -255) vL = -255;
-    MotorWriting(vL, vR);  //Feedback to motors
+    Tracking(v);
   }
 
+}
+
+
+void CheckRFID(){
+  byte idSize;
+  byte* uid = rfid(idSize);  // Call rfid() to check for a card
+
+  if (uid) {  // If an RFID card is detected
+      send_byte(uid,idSize);
+      delay(100);
+  }
+
+}
+
+void NextAction(double v){
+  BT_CMD cmd = commandQueue.peek();
+  Serial.println(cmd);
+  switch (cmd) {
+      case FORWARD:
+          //state = true;
+          MotorWriting(v, v);
+          delay(380);
+          break;
+      case BACKWARD:
+          //state = true;
+          MotorWriting(-v, v);
+          delay(830);
+          break;
+      case LEFT:
+          //state = true;
+          MotorWriting(-v, v);
+          delay(380);
+          break;
+      case RIGHT:
+          //state = true;
+          MotorWriting(v, -v);
+          delay(380);
+          break;
+      case STOP:
+          state = false;
+          MotorWriting(0, 0);
+          break;
+      default:
+          break;
+    
+  }
+  commandQueue.dequeue();
 }
 /*===========================define function===========================*/
