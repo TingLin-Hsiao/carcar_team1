@@ -29,9 +29,11 @@ BT_CMD ask_BT() {
         if(cmd) Serial.println(cmd);
         delay(100);
     
-// TODO:
+    
+// TODO:    
 // 1. get cmd from BT(bluetooth serial)
 // 2. link bluetooth message to your own command type
+
 #ifdef DEBUG
         //Serial.print("cmd : ");
         //Serial.println(cmd);

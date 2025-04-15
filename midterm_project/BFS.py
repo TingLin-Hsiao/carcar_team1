@@ -137,8 +137,9 @@ def action_list(start_node, goal_node, maze_file):
 # for i in range(len(path_list)-1):
 #     start = path_list[i]
 #     goal = path_list[i+1]
-
-#     print(action_list(start, goal, "maze.csv"))
+# start = 3
+# goal = 10
+# print(action_list(start, goal, "maze_checklist.csv"))
 
     
     
