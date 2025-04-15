@@ -18,8 +18,8 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
-TEAM_NAME = "王立淼"
-SERVER_URL = "http://140.112.175.18:5000/"
+TEAM_NAME = "TeamName1"
+SERVER_URL = "http://140.112.175.18:4000/"
 MAZE_FILE = "data/small_maze.csv"
 BT_PORT = "COM11"
 
@@ -53,15 +53,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
         elif mode == "1":
             log.info("Mode 1: Self-testing mode.")
             # TODO: You can write your code to test specific function.
-            path_list=[1,4,7,5]
-            for i in range(len(path_list)-1):
-                start = path_list[i]
-                goal = path_list[i+1]
-
-                dirc=BFS.action_list(start, goal, "maze.csv")
-                interface.send_action(dirc)
-
-            interface.send_action("S")
+            
             while True:
                 dir = input()
                 interface.send_action(dir)

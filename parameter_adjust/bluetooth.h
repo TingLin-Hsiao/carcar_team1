@@ -28,9 +28,9 @@ BT_CMD ask_BT() {
         cmd = BT.read();
         if(cmd) Serial.println(cmd);
         delay(100);
+
     
-    
-// TODO:    
+// TODO:
 // 1. get cmd from BT(bluetooth serial)
 // 2. link bluetooth message to your own command type
 
@@ -52,6 +52,22 @@ BT_CMD ask_BT() {
     return message;
 }  // ask_BT
 
+int ask_delay() {
+  char c;
+  int result=0;
+  for(int i=0;i<3;i++){
+    while (true){
+      if (BT.available()) {
+        result *= 10;
+        c = BT.read();
+        result += (int(c)-48);
+        break;
+      }
+  
+    }
+  }
+  return result;
+}
 
 // send msg back through BT(bluetooth serial)
 // can use send_byte alternatively to send msg back
