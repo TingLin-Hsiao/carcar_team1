@@ -4,6 +4,7 @@ import time
 import threading
 
 from BT import Bluetooth
+from score import ScoreboardServer, ScoreboardFake
 
 log = logging.getLogger(__name__)
 
@@ -12,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class BTInterface:
-    def __init__(self, scoreboard, port: Optional[str] = None):
+    def __init__(self, port: Optional[str] = None):
         log.info("Arduino Bluetooth Connect Program.")
         self.bt = Bluetooth()
         if port is None:
@@ -26,8 +27,7 @@ class BTInterface:
         self.listening = True
         self.listener_thread = threading.Thread(target=self.listen_for_uid, daemon=True)
         self.listener_thread.start()
-        self.scoreboard = scoreboard
-        
+    
     def start(self):
         input("Press enter to start.")
         self.bt.serial_write_string("s")
@@ -37,10 +37,7 @@ class BTInterface:
         uid = self.bt.serial_read_byte()
         if uid:
             print(f"Received UID: {f'{uid}'.upper()}")
-            score, time_remaining = self.scoreboard.add_UID(f'{uid}'.upper())
-            current_score = self.scoreboard.get_current_score()
-            log.info(f"Score from UID: {score}, Time left: {time_remaining}")
-            log.info(f"Current score: {current_score}")
+            return f'{uid}'.upper()
         return None
     
     def listen_for_uid(self):

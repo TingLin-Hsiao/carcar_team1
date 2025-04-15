@@ -44,7 +44,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
     try:
         scoreboard = ScoreboardFake(TEAM_NAME , "data/fakeUID.csv")
-        interface = BTInterface(scoreboard, port=bt_port)
+        interface = BTInterface(port=bt_port)
         # TODO : Initialize necessary variables
 
         if mode == "0":
@@ -66,6 +66,12 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
             while True:
                 dir = input()
                 interface.send_action(dir)
+                if interface.get_UID():
+                    uid = interface.get_UID()
+                    score, time_remaining = scoreboard.add_UID(uid)
+                    current_score = scoreboard.get_current_score()
+                    log.info(f"Score from UID: {score}, Time left: {time_remaining}")
+                    log.info(f"Current score: {current_score}")
                 time.sleep(0.1)
 
         else:
