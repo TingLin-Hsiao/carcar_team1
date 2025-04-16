@@ -43,7 +43,8 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     # point = ScoreboardServer(TEAM_NAME, SERVER_URL)
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
     try:
-        scoreboard = ScoreboardFake(TEAM_NAME , "data/fakeUID.csv")
+        scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
+        # scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
         interface = BTInterface(port=bt_port)
         # TODO : Initialize necessary variables
 
@@ -54,20 +55,22 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
         elif mode == "1":
             log.info("Mode 1: Self-testing mode.")
             # TODO: You can write your code to test specific function.
-            path_list=[1,4,7,5]
-            for i in range(len(path_list)-1):
-                start = path_list[i]
-                goal = path_list[i+1]
+            # path_list=[1,4,7,5]
+            # for i in range(len(path_list)-1):
+            #     start = path_list[i]
+            #     goal = path_list[i+1]
 
-                dirc=BFS.action_list(start, goal, MAZE_FILE)
-                interface.send_action(dirc)
-
+            #     dirc=BFS.action_list(start, goal, MAZE_FILE)
+            #     interface.send_action(dirc)
+            dirc=['R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B']
+            interface.send_action(dirc)
             interface.send_action("S")
             while True:
-                dir = input()
-                interface.send_action(dir)
-                if interface.get_UID():
-                    uid = interface.get_UID()
+                # dir = input()
+                # interface.send_action(dir)
+                uid = interface.get_UID()
+                if uid :
+                    # print("yee")
                     score, time_remaining = scoreboard.add_UID(uid)
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")

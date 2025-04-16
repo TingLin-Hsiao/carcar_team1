@@ -35,9 +35,12 @@ class BTInterface:
     def get_UID(self):
         """Read and return the UID from Arduino (if available)."""
         uid = self.bt.serial_read_byte()
-        if uid:
-            print(f"Received UID: {f'{uid}'.upper()}")
-            return f'{uid}'.upper()
+        uid = str(uid)
+        uid=uid.upper()
+        uid = uid.replace("0X","")
+        if uid != "0":
+            print(f"Received UID: {uid}")
+            return uid
         return None
     
     def listen_for_uid(self):
