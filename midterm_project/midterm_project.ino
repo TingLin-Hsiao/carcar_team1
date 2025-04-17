@@ -37,9 +37,19 @@ using namespace std;
 // RFID, 請按照自己車上的接線寫入腳位
 #define RST_PIN 9                 // 讀卡機的重置腳位
 #define SS_PIN 53                  // 晶片選擇腳位
-MFRC522 mfrc522(SS_PIN, RST_PIN);  // 建立MFRC522物件
-
+/*=====Import header files=====*/
+MFRC522 mfrc522(SS_PIN, RST_PIN);
 #include<SoftwareSerial.h>
+#include "pin_define.h"
+#include "RFID.h"
+#include "node.h"
+#include "track.h"
+#include "bluetooth.h"
+#include "queue.h"
+/*=====Import header files=====*/
+  // 建立MFRC522物件
+Queue<BT_CMD,10> commandQueue;
+
 /*===========================define pin & create module object===========================*/
 SoftwareSerial BT(10,11);
 /*============setup============*/
@@ -64,30 +74,22 @@ void setup() {
     pinMode(digitalPin3, INPUT);
     pinMode(digitalPin4, INPUT);
     pinMode(digitalPin5, INPUT);
+    commandQueue.enqueue(NOTHING);
 #ifdef DEBUG
     Serial.println("Start!");
 #endif
 }
 /*============setup============*/
 
-/*=====Import header files=====*/
-#include "pin_define.h"
-#include "RFID.h"
-#include "node.h"
-#include "track.h"
-#include "bluetooth.h"
-#include "queue.h"
-
-/*=====Import header files=====*/
 
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
-int v = 90;       
+int v = 200;       
 //int yee=0;                         // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
 BT_CMD _cmd = NOTHING;  // enum for bluetooth message, reference in bluetooth.h line 2
-Queue<BT_CMD,100> commandQueue;
+
 /*===========================initialize variables===========================*/
 
 /*===========================declare function prototypes===========================*/
@@ -133,14 +135,16 @@ void Search() {
   int r3 = digitalRead(digitalPin5);
 
   if (l2 && m && r2) {
-    while(l2!=0 && r2!=0){
-      CheckRFID();
-      MotorWriting(v,v);
-      l2 = digitalRead(digitalPin2);
-      r2 = digitalRead(digitalPin4);
-    }
+    // while(l2!=0 && r2!=0){
+    //   CheckRFID();
+    //   MotorWriting(v*0.6,v*0.6);
+    //   l2 = digitalRead(digitalPin2);
+    //   r2 = digitalRead(digitalPin4);
+    // }
+    CheckRFID();
     NextAction(v);
-  } else {
+  }
+  else {
     Tracking(v);
   }
 
@@ -164,27 +168,31 @@ void NextAction(double v){
   switch (cmd) {
       case FORWARD:
           //state = true;
-          MotorWriting(v, v);
-          //delay(380);
+          MotorWriting(200, 200);
+          delay(300);
           break;
       case BACKWARD:
           //state = true;
-          MotorWriting(-v, v);
-          delay(830);
+          MotorWriting(-130, 130);
+          delay(700);
           break;
       case LEFT:
           //state = true;
-          MotorWriting(-v, v);
-          delay(380);
+          MotorWriting(-200, 203);
+          delay(350);
           break;
       case RIGHT:
           //state = true;
-          MotorWriting(v, -v);
-          delay(380);
+          MotorWriting(203, -200);
+          delay(345);
           break;
       case STOP:
           state = false;
           MotorWriting(0, 0);
+          break;
+      case NOTHING:
+          MotorWriting(200,200);
+          delay(50);
           break;
       default:
           break;
