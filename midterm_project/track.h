@@ -51,7 +51,7 @@ void Tracking(double v){
   int w2 = 1.1;
   int w3 = 1.4;
   int Tp = v;
-  int Kp = Tp * 0.3;
+  int Kp = Tp * 0.2;
   int l3 = digitalRead(digitalPin1);
   int l2 = digitalRead(digitalPin2);
   int m  = digitalRead(digitalPin3);
