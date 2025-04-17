@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 # TODO : Fill in the following information
 TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
-MAZE_FILE = "maze.csv"
+MAZE_FILE = "medium_maze.csv"
 BT_PORT = "COM11"
 
 
@@ -43,8 +43,8 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     # point = ScoreboardServer(TEAM_NAME, SERVER_URL)
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
     try:
-        scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
-        # scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
+        # scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
+        scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
         interface = BTInterface(port=bt_port)
         # TODO : Initialize necessary variables
 
@@ -55,19 +55,22 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
         elif mode == "1":
             log.info("Mode 1: Self-testing mode.")
             # TODO: You can write your code to test specific function.
-            # path_list=[1,4,7,5]
+            # path_list=[3,5,2,4]
+            # path_list=[9,7,10,12]
+            # # interface.send_action("F")
             # for i in range(len(path_list)-1):
             #     start = path_list[i]
             #     goal = path_list[i+1]
 
             #     dirc=BFS.action_list(start, goal, MAZE_FILE)
             #     interface.send_action(dirc)
-            dirc=['R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B']
+            dirc=['F','L','F','B','F','R','R','L','R','B','L','L','F','L','B','F']
             interface.send_action(dirc)
             interface.send_action("S")
             while True:
                 # dir = input()
                 # interface.send_action(dir)
+                # print("yeeha")
                 uid = interface.get_UID()
                 if uid :
                     # print("yee")
@@ -75,7 +78,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                time.sleep(0.1)
+                # time.sleep(0.1)
 
         else:
             log.error("Invalid mode")

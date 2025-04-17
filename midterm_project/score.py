@@ -157,23 +157,28 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
     try:
-        scoreboard = ScoreboardServer("!王立淼", "http://140.112.175.18:5000")
+        scoreboard = ScoreboardServer("柏睿睿", "http://140.112.175.18:5000")
         # scoreboard = ScoreboardFake("TeamName", "fakeUID.csv")
         time.sleep(1)
 
-        score, time_remaining = scoreboard.add_UID("C59B51D0")
+        score, time_remaining = scoreboard.add_UID("F159AF1E")
         current_score = scoreboard.get_current_score()
         log.info(f"Current score: {current_score}")
         time.sleep(1)
 
-        score, time_remaining = scoreboard.add_UID("556D04D6")
+        score, time_remaining = scoreboard.add_UID("42F7481E")
         current_score = scoreboard.get_current_score()
         log.info(f"Current score: {current_score}")
         time.sleep(1)
 
-        score, time_remaining = scoreboard.add_UID("12345678")
+        score, time_remaining = scoreboard.add_UID("9AC053BD")
         current_score = scoreboard.get_current_score()
         log.info(f"Current score: {current_score}")
+        time.sleep(1)
+
+        # score, time_remaining = scoreboard.add_UID("7A1653BD")
+        # current_score = scoreboard.get_current_score()
+        # log.info(f"Current score: {current_score}")
         time.sleep(117)
 
     except KeyboardInterrupt:

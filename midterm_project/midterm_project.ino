@@ -82,7 +82,7 @@ void setup() {
 
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
-int v = 80;       
+int v = 90;       
 //int yee=0;                         // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
@@ -165,7 +165,7 @@ void NextAction(double v){
       case FORWARD:
           //state = true;
           MotorWriting(v, v);
-          delay(380);
+          //delay(380);
           break;
       case BACKWARD:
           //state = true;
