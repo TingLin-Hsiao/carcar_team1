@@ -17,7 +17,8 @@ enum BT_CMD {
     BACKWARD = 2,
     LEFT = 3,
     RIGHT = 4,
-    STOP = 5
+    STOP = 5,
+    GO = 6
     // TODO: add your own command type here
 };
 
@@ -27,7 +28,7 @@ BT_CMD ask_BT() {
     if (BT.available()) {
         cmd = BT.read();
         if(cmd) Serial.println(cmd);
-        delay(100);
+        delay(50);
     
     
 // TODO:    
@@ -44,7 +45,7 @@ BT_CMD ask_BT() {
             case 'L': message = LEFT; break;
             case 'R': message = RIGHT; break;
             case 'S': message = STOP; break;
-            default: message = NOTHING; break;
+            //default: message = NOTHING; break;
         }
     }
     
