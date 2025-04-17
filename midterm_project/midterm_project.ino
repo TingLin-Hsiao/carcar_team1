@@ -74,7 +74,7 @@ void setup() {
     pinMode(digitalPin3, INPUT);
     pinMode(digitalPin4, INPUT);
     pinMode(digitalPin5, INPUT);
-    commandQueue.enqueue(NOTHING);
+    commandQueue.enqueue(GO);
 #ifdef DEBUG
     Serial.println("Start!");
 #endif
@@ -84,7 +84,7 @@ void setup() {
 
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
-int v = 200;       
+int v = 180;       
 //int yee=0;                         // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
@@ -101,15 +101,17 @@ void NextAction(double v);
 
 /*===========================define function===========================*/
 void loop() {
-    if (!state)
+    if (!state){
         MotorWriting(0, 0);
-    else
+    }
+    else{
+        CheckRFID();
         Search();
+    }
     SetState();
 
     CheckRFID();
-    //Serial.println(yee++);
-    //delay(50);  // Small delay to avoid excessive CPU usage
+    //Serial.println(yee++);    //delay(50);  // Small delay to avoid excessive CPU usage
 }
 
 
@@ -118,6 +120,8 @@ void SetState() {
     if (_cmd!=NOTHING){
       state=true;
       commandQueue.enqueue(_cmd);
+      // Serial.print("add command");
+      // Serial.println(_cmd);
     }
     
 }
@@ -157,42 +161,109 @@ void CheckRFID(){
 
   if (uid) {  // If an RFID card is detected
       send_byte(uid,idSize);
-      delay(100);
+      delay(50);
   }
 
 }
 
+void left_turning(){
+  int IR_A1 = digitalRead(digitalPin1);
+  int IR_A2 = digitalRead(digitalPin2);
+  int IR_A3 = digitalRead(digitalPin3);
+  int IR_A5 = digitalRead(digitalPin5);
+      // while(((IR_A1==0)&&(IR_A5==0))&&((IR_A2==1)||(IR_A3==1))==0){
+      //   IR_A1 = digitalRead(digitalPin1);
+      //   IR_A2 = digitalRead(digitalPin2);
+      //   IR_A3 = digitalRead(digitalPin3);
+      //   IR_A5 = digitalRead(digitalPin5);
+      // }
+      while(IR_A2==1){
+        IR_A2 = digitalRead(digitalPin2);
+      }
+      while(IR_A2==0){
+        IR_A2 = digitalRead(digitalPin2);
+      }
+      MotorWriting(180,150);
+      delay(20);
+}
+void right_turning(){
+  int IR_B1 = digitalRead(digitalPin1);
+  int IR_B3 = digitalRead(digitalPin3);
+  int IR_B4 = digitalRead(digitalPin4);
+  int IR_B5 = digitalRead(digitalPin5);
+      // while(((IR_B1==0)&&(IR_B5==0))&&((IR_B3==1)||(IR_B4==1))==0){
+      //   IR_B1 = digitalRead(digitalPin1);
+      //   IR_B3 = digitalRead(digitalPin3);
+      //   IR_B4 = digitalRead(digitalPin4);
+      //   IR_B5 = digitalRead(digitalPin5);
+      // }
+      while(IR_B4==1){
+        IR_B4 = digitalRead(digitalPin4);
+      }
+      while(IR_B4==0){
+        IR_B4 = digitalRead(digitalPin4);
+      }
+      MotorWriting(150,180);
+      delay(20);
+}
+
 void NextAction(double v){
   BT_CMD cmd = commandQueue.peek();
-  Serial.println(cmd);
   switch (cmd) {
       case FORWARD:
           //state = true;
-          MotorWriting(200, 200);
-          delay(300);
+          Serial.println("FORWARD");
+          MotorWriting(v, v);
+          CheckRFID();
+          delay(250);
           break;
       case BACKWARD:
           //state = true;
-          MotorWriting(-130, 130);
-          delay(700);
+          Serial.println("BACKWARD");
+          MotorWriting(100,100);
+          delay(50);
+          MotorWriting(-100, 100);
+          CheckRFID();
+          delay(400);
+          left_turning();
+          MotorWriting(200,-50);
+          delay(50);
           break;
       case LEFT:
+          Serial.println("LEFT");
           //state = true;
-          MotorWriting(-200, 203);
-          delay(350);
+          //MotorWriting(-30,180);
+          delay(10);
+          MotorWriting(0, 150);
+          CheckRFID();
+          delay(285);
+          left_turning();
+          // MotorWriting(100,200);
+          // delay(20);
           break;
       case RIGHT:
           //state = true;
-          MotorWriting(203, -200);
-          delay(345);
+          Serial.println("RIGHT");
+          // MotorWriting(180,-30);
+
+          delay(10);
+          MotorWriting(180, 0);
+          CheckRFID();
+          delay(270);
+          right_turning();
+          // MotorWriting(100,200);
+          // delay(20);
           break;
       case STOP:
+          Serial.println("STOP");
           state = false;
           MotorWriting(0, 0);
           break;
-      case NOTHING:
-          MotorWriting(200,200);
-          delay(50);
+      case GO:
+          delay(1000);
+          Serial.println("GO");
+          MotorWriting(v,v);
+          delay(150);
           break;
       default:
           break;
