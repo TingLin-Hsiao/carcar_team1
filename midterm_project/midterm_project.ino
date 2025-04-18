@@ -147,6 +147,7 @@ void Search() {
     // }
     CheckRFID();
     NextAction(v);
+    AskNextAction();
   }
   else {
     Tracking(v);
@@ -165,7 +166,10 @@ void CheckRFID(){
   }
 
 }
-
+void AskNextAction(){
+    send_byte("Yes");
+    delay(5);
+}
 void left_turning(){
   int IR_A1 = digitalRead(digitalPin1);
   int IR_A2 = digitalRead(digitalPin2);

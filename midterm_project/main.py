@@ -62,22 +62,35 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
             #     start = path_list[i]
             #     goal = path_list[i+1]
 
-            #     dirc=BFS.action_list(start, goal, MAZE_FILE)
-            #     interface.send_action(dirc)
+            #     dirc.append(BFS.action_list(start, goal, MAZE_FILE))
             dirc=['F','L','F','B','F','R','R','L','R','B','L','L','F','L','B','F']
-            interface.send_action(dirc)
-            interface.send_action("S")
+            dirc.append('S')
+            action_index=0
+            for i in range(3):
+                interface.send_action(dirc[action_index])
+                action_index+=1
+            
             while True:
                 # dir = input()
                 # interface.send_action(dir)
                 # print("yeeha")
+                
                 uid = interface.get_UID()
+                arrive = interface.get_Node()
                 if uid :
                     # print("yee")
                     score, time_remaining = scoreboard.add_UID(uid)
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
+                if arrive == "Yes":
+                    if action_index < len(dirc):  # 防止 index 超出範圍
+                        interface.send_action(dirc[action_index])
+                        log.info(f"Send direction: {dirc[action_index]}")
+                        action_index += 1
+                    else:
+                        log.info("所有指令已發送完畢！")
+                    
                 # time.sleep(0.1)
 
         else:

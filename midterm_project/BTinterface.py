@@ -51,13 +51,23 @@ class BTInterface:
                 log.info(uid)
             time.sleep(0.5)  # Avoid excessive CPU usage
 
+    def get_Node(self):
+        arrive = self.bt.serial_read_byte()
+        arrive = str(arrive)
+        arrive = arrive.upper()
+        arrive = arrive.replace("0X","")
+        if arrive != "0":
+            print("Arrived Node")
+            return arrive
+        return None
+
     def send_action(self, dirc):
         valid_commands = {"F", "B", "L", "R", "S"}  # Define allowed commands
         for i in dirc:
             if i in valid_commands:
                 self.bt.serial_write_string(i)
                 log.info(f"Sent action: {i}")
-                print(f'commmand: {i}\n')
+                # print(f'commmand: {i}\n')
                 
             else:
                 log.error(f"Invalid action: {dirc}")
