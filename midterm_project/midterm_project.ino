@@ -167,7 +167,7 @@ void CheckRFID(){
 
 }
 void AskNextAction(){
-    send_byte("Yes");
+    send_byte("YES");
     delay(5);
 }
 void left_turning(){

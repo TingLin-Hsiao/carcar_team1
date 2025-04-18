@@ -22,6 +22,7 @@ TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
 MAZE_FILE = "medium_maze.csv"
 BT_PORT = "COM11"
+ACTION_LIST = "action_list.txt"
 
 
 
@@ -63,7 +64,9 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
             #     goal = path_list[i+1]
 
             #     dirc.append(BFS.action_list(start, goal, MAZE_FILE))
-            dirc=['F','L','F','B','F','R','R','L','R','B','L','L','F','L','B','F']
+            action_file = open(ACTION_LIST, mode="r")
+            dirc=list(action_file.read().strip())
+            action_file.close()
             dirc.append('S')
             action_index=0
             for i in range(3):
@@ -83,7 +86,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                if arrive == "Yes":
+                if arrive == "YES":
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])
                         log.info(f"Send direction: {dirc[action_index]}")
