@@ -85,7 +85,8 @@ void setup() {
 /*===========================initialize variables===========================*/
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
 int v = 180;       
-//int yee=0;                         // set your own value for motor power
+//int yee=0;     
+int flag=1;                    // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
 BT_CMD _cmd = NOTHING;  // enum for bluetooth message, reference in bluetooth.h line 2
@@ -137,6 +138,7 @@ void Search() {
   int m = digitalRead(digitalPin3);
   int r2 = digitalRead(digitalPin4);
   int r3 = digitalRead(digitalPin5);
+  
 
   if (l2 && m && r2) {
     // while(l2!=0 && r2!=0){
@@ -147,10 +149,16 @@ void Search() {
     // }
     CheckRFID();
     NextAction(v);
-    AskNextAction();
-  }
-  else {
+    // AskNextAction();
+    if(flag){
+      AskNextAction();
+      flag = 0;
+    }
+      
+  }else {
+    flag=1;
     Tracking(v);
+    
   }
 
 }
@@ -167,7 +175,10 @@ void CheckRFID(){
 
 }
 void AskNextAction(){
-    send_byte("YES");
+    // byte msg[] = "Y"; 
+    // byte len = sizeof(msg) - 1;
+    // send_byte(msg, len);
+    send_msg("Yes");
     delay(5);
 }
 void left_turning(){

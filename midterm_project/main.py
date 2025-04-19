@@ -22,7 +22,7 @@ TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
 MAZE_FILE = "medium_maze.csv"
 BT_PORT = "COM11"
-ACTION_LIST = "action_list.txt"
+ACTION_LIST = "cross_list.txt"#"action_list.txt"
 
 
 
@@ -44,8 +44,8 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     # point = ScoreboardServer(TEAM_NAME, SERVER_URL)
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
     try:
-        # scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
-        scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
+        scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
+        # scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
         interface = BTInterface(port=bt_port)
         # TODO : Initialize necessary variables
 
@@ -86,7 +86,8 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                if arrive == "YES":
+                # print(arrive)
+                if arrive == "FC":
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])
                         log.info(f"Send direction: {dirc[action_index]}")

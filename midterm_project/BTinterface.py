@@ -38,7 +38,9 @@ class BTInterface:
         uid = str(uid)
         uid=uid.upper()
         uid = uid.replace("0X","")
-        if uid != "0":
+        
+        # if uid != "0" and uid != "596573":
+        if len(uid) == 8:
             print(f"Received UID: {uid}")
             return uid
         return None
@@ -56,7 +58,8 @@ class BTInterface:
         arrive = str(arrive)
         arrive = arrive.upper()
         arrive = arrive.replace("0X","")
-        if arrive != "0":
+        # print(arrive)
+        if arrive == "FC":
             print("Arrived Node")
             return arrive
         return None
