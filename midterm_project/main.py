@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
 MAZE_FILE = "medium_maze.csv"
-BT_PORT = "COM11"
+BT_PORT = "COM9"
 ACTION_LIST = "cross_list.txt"#"action_list.txt"
 
 
@@ -66,6 +66,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
             #     dirc.append(BFS.action_list(start, goal, MAZE_FILE))
             action_file = open(ACTION_LIST, mode="r")
             dirc=list(action_file.read().strip())
+            print(dirc)
             action_file.close()
             dirc.append('S')
             action_index=0
@@ -76,26 +77,46 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
             while True:
                 # dir = input()
                 # interface.send_action(dir)
-                # print("yeeha")
-                
-                uid = interface.get_UID()
-                arrive = interface.get_Node()
-                if uid :
-                    # print("yee")
-                    score, time_remaining = scoreboard.add_UID(uid)
+
+                msg = interface.get_UID()
+                # print(msg)
+                if msg==None:
+                    continue
+                elif len(msg) == 8:
+                    score, time_remaining = scoreboard.add_UID(msg)
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                # print(arrive)
-                if arrive == "FC":
+                elif msg=="FC":
+                    # print("NODE")
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])
                         log.info(f"Send direction: {dirc[action_index]}")
                         action_index += 1
                     else:
-                        log.info("所有指令已發送完畢！")
+                        log.info("所有指令已發送完畢！") 
+                else:
+                    continue
+                time.sleep(0.05)
+                
+            #     uid = interface.get_UID()
+            #     arrive = interface.get_Node()
+            #     if uid :
+            #         # print("yee")
+            #         score, time_remaining = scoreboard.add_UID(uid)
+            #         current_score = scoreboard.get_current_score()
+            #         log.info(f"Score from UID: {score}, Time left: {time_remaining}")
+            #         log.info(f"Current score: {current_score}")
+            #     # print(arrive)
+            #     if arrive == "FC":
+            #         if action_index < len(dirc):  # 防止 index 超出範圍
+            #             interface.send_action(dirc[action_index])
+            #             log.info(f"Send direction: {dirc[action_index]}")
+            #             action_index += 1
+            #         else:
+            #             log.info("所有指令已發送完畢！")
                     
-                # time.sleep(0.1)
+            #     # time.sleep(0.1)
 
         else:
             log.error("Invalid mode")
