@@ -106,7 +106,7 @@ void loop() {
         MotorWriting(0, 0);
     }
     else{
-        CheckRFID();
+        // CheckRFID();
         Search();
     }
     SetState();
@@ -117,12 +117,14 @@ void loop() {
 
 
 void SetState() {
-    _cmd = ask_BT();
-    if (_cmd!=NOTHING){
-      state=true;
-      commandQueue.enqueue(_cmd);
-      // Serial.print("add command");
-      // Serial.println(_cmd);
+    if(commandQueue.isFull()!=true){
+      _cmd = ask_BT();
+      if (_cmd!=NOTHING){
+        state=true;
+        commandQueue.enqueue(_cmd);
+        // Serial.print("add command");
+        // Serial.println(_cmd);
+      }
     }
     
 }
@@ -147,7 +149,7 @@ void Search() {
     //   l2 = digitalRead(digitalPin2);
     //   r2 = digitalRead(digitalPin4);
     // }
-    CheckRFID();
+    delay(10);
     NextAction(v);
     // AskNextAction();
     if(flag){
@@ -170,7 +172,7 @@ void CheckRFID(){
 
   if (uid) {  // If an RFID card is detected
       send_byte(uid,idSize);
-      delay(50);
+      delay(5);
   }
 
 }
@@ -198,8 +200,8 @@ void left_turning(){
       while(IR_A2==0){
         IR_A2 = digitalRead(digitalPin2);
       }
-      MotorWriting(180,150);
-      delay(20);
+      MotorWriting(100,0);
+      delay(15);
 }
 void right_turning(){
   int IR_B1 = digitalRead(digitalPin1);
@@ -218,10 +220,29 @@ void right_turning(){
       while(IR_B4==0){
         IR_B4 = digitalRead(digitalPin4);
       }
-      MotorWriting(150,180);
+      MotorWriting(0,100);
+      delay(15);
+}
+void returning(){
+  int IR_A1 = digitalRead(digitalPin1);
+  int IR_A2 = digitalRead(digitalPin2);
+  int IR_A3 = digitalRead(digitalPin3);
+  int IR_A5 = digitalRead(digitalPin5);
+      // while(((IR_A1==0)&&(IR_A5==0))&&((IR_A2==1)||(IR_A3==1))==0){
+      //   IR_A1 = digitalRead(digitalPin1);
+      //   IR_A2 = digitalRead(digitalPin2);
+      //   IR_A3 = digitalRead(digitalPin3);
+      //   IR_A5 = digitalRead(digitalPin5);
+      // }
+      while(IR_A1==1){
+        IR_A1 = digitalRead(digitalPin1);
+      }
+      while(IR_A1==0){
+        IR_A1 = digitalRead(digitalPin1);
+      }
+      MotorWriting(100,-30);
       delay(20);
 }
-
 void NextAction(double v){
   BT_CMD cmd = commandQueue.peek();
   switch (cmd) {
@@ -230,28 +251,26 @@ void NextAction(double v){
           Serial.println("FORWARD");
           MotorWriting(v, v);
           CheckRFID();
-          delay(250);
+          delay(400);
           break;
       case BACKWARD:
           //state = true;
           Serial.println("BACKWARD");
-          MotorWriting(100,100);
-          delay(50);
-          MotorWriting(-100, 100);
-          CheckRFID();
-          delay(400);
-          left_turning();
-          MotorWriting(200,-50);
-          delay(50);
+          MotorWriting(120,100);
+          delay(10);
+          MotorWriting(-130, 100);
+          delay(350);
+          returning();
+          // MotorWriting(200,-50);
+          // delay(50);
           break;
       case LEFT:
           Serial.println("LEFT");
           //state = true;
           //MotorWriting(-30,180);
           delay(10);
-          MotorWriting(0, 150);
-          CheckRFID();
-          delay(285);
+          MotorWriting(0, 180);
+          delay(250);
           left_turning();
           // MotorWriting(100,200);
           // delay(20);
@@ -263,8 +282,7 @@ void NextAction(double v){
 
           delay(10);
           MotorWriting(180, 0);
-          CheckRFID();
-          delay(270);
+          delay(250);
           right_turning();
           // MotorWriting(100,200);
           // delay(20);
