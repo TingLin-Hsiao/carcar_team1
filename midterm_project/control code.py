@@ -1,10 +1,13 @@
 import pandas as pd
 import heapq
 from itertools import combinations, permutations
+import time
+
+start_time = time.time()
 
 
 # === 讀取 CSV 並建立圖 ===
-file_path = "C:/Users/edwin/OneDrive/桌面/大一下/車車課/BFS/big_maze_113.csv"  # 請替換成你實際的 maze 檔案名稱
+file_path = "C:/Users/edwin/carcar_team1/midterm_project/big_maze_113.csv"  # maze 檔案名稱
 df = pd.read_csv(file_path, header=0)
 df.columns = ["index", "North", "South", "West", "East", "ND", "SD", "WD", "ED"]
 df = df[df["index"] != "index"]
@@ -128,75 +131,108 @@ def compute_scores(start, treasures, cols,rows):
         scores[t] = 30*(abs(sx-tx)+abs(ty-sy))
     return scores
 
-def build_all_pairs_shortest_paths(graph, nodes):
+
+
+def build_all_pairs_shortest_paths_with_time(graph, nodes):
     shortest_paths = {}
+    time_cache = {}
     for i in nodes:
         for j in nodes:
             if i == j:
                 continue
-            path, dist = dijkstra(graph, i, j)
-            shortest_paths[(i, j)] = (path, dist)
-    return shortest_paths
+            path, _ = dijkstra(graph, i, j)
+            shortest_paths[(i, j)] = path
+            time_cache[(i, j)] = compute_total_time(path)
+    return shortest_paths, time_cache
 
-def best_path_within_steps(start_node, treasures, scores, path_cache, max_steps):
+def compute_total_time(path):
+    total_time = 0.0
+    facing = None
+    for i in range(len(path) - 1):
+        abs_dir = get_absolute_direction(path[i], path[i+1])
+        rel_dir = get_relative_direction(facing, abs_dir)
+        if rel_dir == 'f':
+            total_time += t_f
+        elif rel_dir in ['l', 'r']:
+            total_time += t_f + t_l  # 轉彎完再直走
+        elif rel_dir == 'b':
+            total_time += t_b + t_f  # 迴轉完再直走
+        facing = abs_dir
+    return total_time
+
+
+
+def best_path_within_time(start_node, treasures, scores, path_cache, time_cache, max_time):
     best_path = []
     best_score = 0
-    best_total_steps = 0
+    best_total_time = 0
 
     for r in range(1, len(treasures)+1):
         for subset in combinations(treasures, r):
             for perm in permutations(subset):
                 path = [start_node]
                 current = start_node
-                total_steps = 0
                 total_score = 0
-                visited_treasures = set()
+                total_time = 0
+                visited = set()
                 valid = True
 
                 for target in perm:
                     if (current, target) not in path_cache:
                         valid = False
                         break
-                    dijkstra_path, dist = path_cache[(current, target)]
-                    total_steps += dist
-                    if total_steps > max_steps:
+
+                    segment = path_cache[(current, target)]
+                    segment_time = time_cache[(current, target)]
+                    total_time += segment_time
+                    if total_time > max_time:
                         valid = False
                         break
-                    if target not in visited_treasures:
+
+                    path += segment[1:]
+                    if target not in visited:
                         total_score += scores.get(target, 0)
-                        visited_treasures.add(target)
-                    path += dijkstra_path[1:]
+                        visited.add(target)
                     current = target
 
                 if valid and total_score > best_score:
                     best_path = path
                     best_score = total_score
-                    best_total_steps = total_steps
-
+                    best_total_time = total_time
 
     return {
         "最佳路徑": best_path,
         "方向列": get_relative_direction_list(best_path),
         "總分數": best_score,
-        "總步數": best_total_steps
+        "總時間": best_total_time
     }
-            
+ 
 
 # === 執行範例 ===
+t_f = 0.5  
+t_l = 1       
+t_r = 1
+t_b = 2   
+
 start_node = 24
 cols = 6
 rows = 8
-treasures = [8,12,14,18,30,31,43,44,48]
+treasures = [8,12,14,18, 30,31,43,44,48]
 scores = compute_scores(start_node, treasures ,cols ,rows)
-max_steps = 200
+max_time = 45
 all_nodes = [start_node] + treasures
-all_pairs = build_all_pairs_shortest_paths(graph, all_nodes)
+all_pairs , time_cache = build_all_pairs_shortest_paths_with_time(graph, all_nodes)
 
 
-result = best_path_within_steps(start_node, treasures, scores, all_pairs, max_steps)
+result = best_path_within_time(start_node, treasures, scores, all_pairs, time_cache,max_time)
+shortest_path = result["方向列"]
+
+end_time = time.time()
+print("執行時間：", end_time - start_time, "秒")
 
 # === 輸出 ===
 print("最佳節點路徑：", result["最佳路徑"])
 print("對應方向列：", result["方向列"])
 print("總分數：", result["總分數"])
-print("總步數：", result["總步數"])
+print("總時間：", result["總時間"])
+
