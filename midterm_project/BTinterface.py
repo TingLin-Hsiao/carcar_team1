@@ -26,7 +26,7 @@ class BTInterface:
         # Start listening for UIDs in a background thread
         self.listening = True
         self.listener_thread = threading.Thread(target=self.listen_for_uid, daemon=True)
-        self.listener_thread.start()
+        #self.listener_thread.start()
     
     def start(self):
         input("Press enter to start.")
@@ -43,6 +43,10 @@ class BTInterface:
         if len(uid) == 8:
             print(f"Received UID: {uid}")
             return uid
+        elif uid!="0":
+            print(f'enter node, message={uid}')
+            return uid       
+        
         return None
     
     def listen_for_uid(self):
@@ -59,7 +63,7 @@ class BTInterface:
         arrive = arrive.upper()
         arrive = arrive.replace("0X","")
         # print(arrive)
-        if arrive == "FC":
+        if arrive == "":
             print("Arrived Node")
             return arrive
         return None
