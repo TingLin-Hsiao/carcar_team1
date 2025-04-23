@@ -59,7 +59,7 @@ BT_CMD ask_BT() {
 // (but need to convert to byte type)
 void send_msg(const char& msg) {
     // TODO:
-    BT.print(msg);
+    BT.write(msg);
 // #ifdef DEBUG
 //     Serial.print("Sent message: ");
 //     Serial.println(msg);
