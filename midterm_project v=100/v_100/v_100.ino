@@ -208,7 +208,7 @@ void AskNextAction(){
     // byte msg[] = "Y"; 
     // byte len = sizeof(msg) - 1;
     // send_byte(msg, len);
-    send_msg("Yes");
+    send_msg(1);
     delay(5);
 }
 void left_turning(){
@@ -277,12 +277,12 @@ void NextAction(double v){
       case FORWARD:
           //state = true;
           Serial.println("FORWARD");
+          delay(50);
           CheckRFID();
           MotorWriting(v,v);
-          delay(350);
+          delay(250);
           break;
-      case BACKWARD:
-          //state = true;
+      case BACKWARD:          //state = true;
           Serial.println("BACKWARD");
           MotorWriting(120,100);
           delay(10);
