@@ -74,6 +74,7 @@ void setup() {
     pinMode(digitalPin3, INPUT);
     pinMode(digitalPin4, INPUT);
     pinMode(digitalPin5, INPUT);
+
     commandQueue.enqueue(GO);
 #ifdef DEBUG
     Serial.println("Start!");
@@ -86,7 +87,8 @@ void setup() {
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
 int v = 180;       
 //int yee=0;     
-int flag=1;                    // set your own value for motor power
+int flag=1;   
+double pre_error=0;                 // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
 BT_CMD _cmd = NOTHING;  // enum for bluetooth message, reference in bluetooth.h line 2
@@ -303,5 +305,6 @@ void NextAction(double v){
     
   }
   commandQueue.dequeue();
+  pre_error=0;
 }
 /*===========================define function===========================*/

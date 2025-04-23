@@ -86,7 +86,11 @@ void setup() {
 //int l2 = 0, l1 = 0, m0 = 0, r1 = 0, r2 = 0;  // 紅外線模組的讀值(0->white,1->black)
 int v = 120;       
 //int yee=0;     
-int flag=1;                    // set your own value for motor power
+int flag=1;
+int flag2 = 0;
+int left_flag= 0;
+int right_flag = 0;     
+double pre_error=0;            // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
 bool state2 = false;
 BT_CMD _cmd = NOTHING;  // enum for bluetooth message, reference in bluetooth.h line 2
@@ -140,16 +144,40 @@ void Search() {
   int m = digitalRead(digitalPin3);
   int r2 = digitalRead(digitalPin4);
   int r3 = digitalRead(digitalPin5);
-  
 
+  if((l3)^(r3)){
+    // flag2 = 1;
+    if(l3==1){
+      left_flag = 1;
+      MotorWriting(v-30,v);
+      delay(50);
+    }
+    else if (r3==1){
+      right_flag = 1;
+      MotorWriting(v,v-30);
+      delay(50);
+    }
+    
+  }
   if (l2 && m && r2) {
+      // if (right_flag){
+        
+      //   
+      //   right_flag=0;
+      // }else if(left_flag){
+        
+      //   
+      //   left_flag=0;
+       
+      // }
+    
     // while(l2!=0 && r2!=0){
     //   CheckRFID();
     //   MotorWriting(v*0.6,v*0.6);
     //   l2 = digitalRead(digitalPin2);
     //   r2 = digitalRead(digitalPin4);
     // }
-    delay(10);
+    delay(70);
     NextAction(v);
     // AskNextAction();
     if(flag){
@@ -249,9 +277,9 @@ void NextAction(double v){
       case FORWARD:
           //state = true;
           Serial.println("FORWARD");
-          MotorWriting(v, v);
           CheckRFID();
-          delay(400);
+          MotorWriting(v,v);
+          delay(350);
           break;
       case BACKWARD:
           //state = true;
@@ -303,5 +331,6 @@ void NextAction(double v){
     
   }
   commandQueue.dequeue();
+  pre_error=0;
 }
 /*===========================define function===========================*/
