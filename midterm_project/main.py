@@ -10,6 +10,7 @@ import pandas
 from BTinterface import BTInterface
 from maze import Action, Maze
 from score import ScoreboardServer, ScoreboardFake
+from control_code import get_path
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -42,6 +43,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     #maze = Maze(maze_file)
     # point = ScoreboardServer(TEAM_NAME, SERVER_URL)
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
+    path = get_path()
     try:
         scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
         # scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
@@ -62,7 +64,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
 
             #     dirc=BFS.action_list(start, goal, MAZE_FILE)
             #     interface.send_action(dirc)
-            dirc=['R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B']
+            dirc=path
             interface.send_action(dirc)
             interface.send_action("S")
             while True:
