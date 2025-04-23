@@ -13,6 +13,7 @@
 /*===========================import variable===========================*/
 #include "pin_define.h"
 int extern v;
+double extern pre_error;
 /*===========================import variable===========================*/
 
 // Write the voltage to motor.
@@ -49,9 +50,10 @@ void MotorInverter(int motor, bool& dir) {
 
 void Tracking(double v){
   int w2 = 1.1;
-  int w3 = 1.4;
+  int w3 = 1.45;
   int Tp = v;
   int Kp = Tp * 0.2;
+  int Kd = Tp * 0.09;
   int l3 = digitalRead(digitalPin1);
   int l2 = digitalRead(digitalPin2);
   int m  = digitalRead(digitalPin3);
@@ -62,10 +64,9 @@ void Tracking(double v){
 
   if (denominator == 0) {
     error = 0;  // 若所有感測器皆未觸發，則 error 設為 0
-  } else {
-    error = (l3 * (-w3) + l2 * (-w2) + r2 * w2 + r3 * w3) ;
   }
-  int powerCorrection = Kp * error;  // ex. Kp = 100, 也與w2 & w3有關
+  double derivative = error-pre_error;
+  int powerCorrection = Kp * error + Kd*derivative;  // ex. Kp = 100, 也與w2 & w3有關
   int vR = Tp - powerCorrection;     // ex. Tp = 150, 也與w2 & w3有關
   int vL = Tp + powerCorrection;
   if (vR > 255) vR = 255;
@@ -73,6 +74,7 @@ void Tracking(double v){
   if (vR < -255) vR = -255;
   if (vL < -255) vL = -255;
   MotorWriting(vL, vR);  //Feedback to motors
+  pre_error = error;
 }
 
 // void Tracking(double v) {
