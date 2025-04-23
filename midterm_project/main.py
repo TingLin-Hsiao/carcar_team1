@@ -10,6 +10,7 @@ import pandas
 from BTinterface import BTInterface
 from maze import Action, Maze
 from score import ScoreboardServer, ScoreboardFake
+from control_code import get_path
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -20,7 +21,7 @@ log = logging.getLogger(__name__)
 # TODO : Fill in the following information
 TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
-MAZE_FILE = "medium_maze.csv"
+MAZE_FILE = "big_maze_113.csv"
 BT_PORT = "COM9"
 ACTION_LIST = "cross_list.txt"#"action_list.txt"
 
@@ -44,17 +45,50 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     # point = ScoreboardServer(TEAM_NAME, SERVER_URL)
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
     try:
-        scoreboard = ScoreboardFake(TEAM_NAME , "fakeUID.csv")
-        # scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
         interface = BTInterface(port=bt_port)
+        
+        
         # TODO : Initialize necessary variables
 
         if mode == "0":
             log.info("Mode 0: For treasure-hunting")
+            scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
             # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
+            dirc = get_path()
+            print(dirc)
+            dirc.append('S')
+            action_index=0
+            for i in range(3):
+                interface.send_action(dirc[action_index])
+                action_index+=1
+            
+            while True:
+                # dir = input()
+                # interface.send_action(dir)
 
+                msg = interface.get_UID()
+                #print(msg)
+                if msg==None:
+                    continue
+                elif len(msg) == 8:
+                    score, time_remaining = scoreboard.add_UID(msg)
+                    current_score = scoreboard.get_current_score()
+                    log.info(f"Score from UID: {score}, Time left: {time_remaining}")
+                    log.info(f"Current score: {current_score}")
+                elif msg=="1":
+                    # print("NODE")
+                    if action_index < len(dirc):  # 防止 index 超出範圍
+                        interface.send_action(dirc[action_index])
+                        log.info(f"Send direction: {dirc[action_index]}")
+                        action_index += 1
+                    else:
+                        log.info("所有指令已發送完畢！") 
+                else:
+                    continue
+                time.sleep(0.05)
         elif mode == "1":
             log.info("Mode 1: Self-testing mode.")
+            scoreboard = ScoreboardFake(TEAM_NAME,"fakeUID.csv")
             # TODO: You can write your code to test specific function.
             # path_list=[3,5,2,4]
             # path_list=[9,7,10,12]
@@ -87,7 +121,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                elif msg=="FC":
+                elif msg=="1":
                     # print("NODE")
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])
