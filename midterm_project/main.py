@@ -20,9 +20,8 @@ log = logging.getLogger(__name__)
 # TODO : Fill in the following information
 TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
-MAZE_FILE = "medium_maze.csv"
+MAZE_FILE = "maze.csv"
 BT_PORT = "COM11"
-ACTION_LIST = "cross_list.txt"#"action_list.txt"
 
 
 
@@ -56,70 +55,28 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
         elif mode == "1":
             log.info("Mode 1: Self-testing mode.")
             # TODO: You can write your code to test specific function.
-            # path_list=[3,5,2,4]
-            # path_list=[9,7,10,12]
-            # # interface.send_action("F")
+            # path_list=[1,4,7,5]
             # for i in range(len(path_list)-1):
             #     start = path_list[i]
             #     goal = path_list[i+1]
 
-            #     dirc.append(BFS.action_list(start, goal, MAZE_FILE))
-            action_file = open(ACTION_LIST, mode="r")
-            dirc=list(action_file.read().strip())
-            print(dirc)
-            action_file.close()
-            dirc.append('S')
-            action_index=0
-            cur_id=''
-            for i in range(3):
-                interface.send_action(dirc[action_index])
-                action_index+=1
-            
+            #     dirc=BFS.action_list(start, goal, MAZE_FILE)
+            #     interface.send_action(dirc)
+            dirc=['R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B','R','B']
+            interface.send_action(dirc)
+            interface.send_action("S")
             while True:
                 # dir = input()
                 # interface.send_action(dir)
-
-                msg = interface.get_UID()
-                # print(msg)
-                if msg==None:
-                    continue
-                elif len(msg) == 8:
-                    for i in range(5):
-                        score, time_remaining = scoreboard.add_UID(msg)
-                    current_score = scoreboard.get_current_score()
+                uid = interface.get_UID()
+                if uid :
+                    # print("yee")
+                    score, time_remaining = scoreboard.add_UID(uid)
+                    current_score = scoreboard.get_current_score() 
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                    cur_id=msg
-                elif msg=="FC":
-                    #print("NODE")
-                    if action_index < len(dirc):  # 防止 index 超出範圍
-                        interface.send_action(dirc[action_index])
-                        log.info(f"Send direction: {dirc[action_index]}")
-                        action_index += 1
-                    else:
-                        log.info("所有指令已發送完畢！") 
-                else:
-                    continue
-                time.sleep(0.05)
+                time.sleep(0.1)
                 
-            #     uid = interface.get_UID()
-            #     arrive = interface.get_Node()
-            #     if uid :
-            #         # print("yee")
-            #         score, time_remaining = scoreboard.add_UID(uid)
-            #         current_score = scoreboard.get_current_score()
-            #         log.info(f"Score from UID: {score}, Time left: {time_remaining}")
-            #         log.info(f"Current score: {current_score}")
-            #     # print(arrive)
-            #     if arrive == "FC":
-            #         if action_index < len(dirc):  # 防止 index 超出範圍
-            #             interface.send_action(dirc[action_index])
-            #             log.info(f"Send direction: {dirc[action_index]}")
-            #             action_index += 1
-            #         else:
-            #             log.info("所有指令已發送完畢！")
-                    
-            #     # time.sleep(0.1)
 
         else:
             log.error("Invalid mode")
