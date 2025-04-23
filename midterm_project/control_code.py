@@ -7,7 +7,7 @@ start_time = time.time()
 
 
 # === 讀取 CSV 並建立圖 ===
-file_path = "C:/Users/edwin/carcar_team1/midterm_project/big_maze_113.csv"  #maze的檔案名稱
+file_path = "big_maze_113.csv"  #maze的檔案名稱
 df = pd.read_csv(file_path, header=0)
 df.columns = ["index", "North", "South", "West", "East", "ND", "SD", "WD", "ED"]
 df = df[df["index"] != "index"]
@@ -253,3 +253,4 @@ if __name__ == "__main__":
     print("總分數：", result["總分數"])
     print("總時間：", result["總時間"])
     print (result["拜訪寶藏順序"])
+    
