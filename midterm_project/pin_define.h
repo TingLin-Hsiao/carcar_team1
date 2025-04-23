@@ -19,7 +19,7 @@
 #define digitalPin5 40
 
 // RFID 感測器
-#define RST_PIN 9
+#define RST_PIN 8
 #define SS_PIN 53
 
 #endif
