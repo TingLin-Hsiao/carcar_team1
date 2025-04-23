@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 TEAM_NAME = "王立淼"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
 MAZE_FILE = "medium_maze.csv"
-BT_PORT = "COM11"
+BT_PORT = "COM9"
 ACTION_LIST = "cross_list.txt"#"action_list.txt"
 
 
@@ -91,7 +91,7 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                     log.info(f"Current score: {current_score}")
                     cur_id=msg
                 elif msg=="FC":
-                    #print("NODE")
+                    # print("NODE")
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])
                         log.info(f"Send direction: {dirc[action_index]}")
