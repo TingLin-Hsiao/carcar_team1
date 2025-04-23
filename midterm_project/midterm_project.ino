@@ -88,9 +88,10 @@ void setup() {
 int v = 180;       
 //int yee=0;     
 int flag=1;   
-double pre_error=0;                 // set your own value for motor power
+int left_flag= 0;
+int right_flag = 0;     
+double pre_error=0;               // set your own value for motor power
 bool state = false;     // set state to false to halt the car, set state to true to activate the car
-bool state2 = false;
 BT_CMD _cmd = NOTHING;  // enum for bluetooth message, reference in bluetooth.h line 2
 
 /*===========================initialize variables===========================*/
@@ -142,7 +143,19 @@ void Search() {
   int m = digitalRead(digitalPin3);
   int r2 = digitalRead(digitalPin4);
   int r3 = digitalRead(digitalPin5);
-  
+  if((l3)^(r3)){
+    // flag2 = 1;
+    if(l3==1){
+      left_flag = 1;
+      //MotorWriting(v-120,v);
+      //delay(40);
+    }
+    else if (r3==1){
+      right_flag = 1;
+      //MotorWriting(v,v-120);
+      //delay(40);
+    }
+  } 
 
   if (l2 && m && r2) {
     // while(l2!=0 && r2!=0){
@@ -151,7 +164,6 @@ void Search() {
     //   l2 = digitalRead(digitalPin2);
     //   r2 = digitalRead(digitalPin4);
     // }
-    delay(10);
     NextAction(v);
     // AskNextAction();
     if(flag){
@@ -182,7 +194,7 @@ void AskNextAction(){
     // byte msg[] = "Y"; 
     // byte len = sizeof(msg) - 1;
     // send_byte(msg, len);
-    send_msg("Yes");
+    send_msg(1);
     delay(5);
 }
 void left_turning(){
@@ -243,7 +255,17 @@ void returning(){
         IR_A1 = digitalRead(digitalPin1);
       }
       MotorWriting(100,-30);
-      delay(20);
+      delay(30);
+}
+void straight(){
+  int IR_A1 = digitalRead(digitalPin1);
+  int IR_A5 = digitalRead(digitalPin5);
+  while(IR_A1&&IR_A5){
+    IR_A1 = digitalRead(digitalPin1);
+    IR_A5 = digitalRead(digitalPin5);
+  }
+
+
 }
 void NextAction(double v){
   BT_CMD cmd = commandQueue.peek();
@@ -251,16 +273,25 @@ void NextAction(double v){
       case FORWARD:
           //state = true;
           Serial.println("FORWARD");
-          MotorWriting(v, v);
-          CheckRFID();
-          delay(400);
+          MotorWriting(v,v);
+          delay(15);
+          if (left_flag){
+            MotorWriting(v-25,v);
+            left_flag=0;
+          } else if(right_flag){
+            MotorWriting(v,v-25);
+            right_flag=0;
+          }
+          delay(75);
+          MotorWriting(v,v);
+          straight();
           break;
       case BACKWARD:
           //state = true;
           Serial.println("BACKWARD");
           MotorWriting(120,100);
-          delay(10);
-          MotorWriting(-130, 100);
+          delay(20);
+          MotorWriting(-110, 100);
           delay(350);
           returning();
           // MotorWriting(200,-50);
@@ -270,9 +301,9 @@ void NextAction(double v){
           Serial.println("LEFT");
           //state = true;
           //MotorWriting(-30,180);
-          delay(10);
-          MotorWriting(0, 180);
-          delay(250);
+          delay(30);
+          MotorWriting(0, 150);
+          delay(275);
           left_turning();
           // MotorWriting(100,200);
           // delay(20);
@@ -282,9 +313,9 @@ void NextAction(double v){
           Serial.println("RIGHT");
           // MotorWriting(180,-30);
 
-          delay(10);
-          MotorWriting(180, 0);
-          delay(250);
+          delay(30);
+          MotorWriting(150, 0);
+          delay(275);
           right_turning();
           // MotorWriting(100,200);
           // delay(20);
@@ -298,7 +329,7 @@ void NextAction(double v){
           delay(1000);
           Serial.println("GO");
           MotorWriting(v,v);
-          delay(150);
+          delay(250);
           break;
       default:
           break;
