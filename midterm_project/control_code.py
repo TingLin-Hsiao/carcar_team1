@@ -7,7 +7,7 @@ start_time = time.time()
 
 
 # === 讀取 CSV 並建立圖 ===
-file_path = "big_maze_113.csv"  #maze的檔案名稱
+file_path = "C:/Users/edwin/carcar_team1/midterm_project/big_maze_113.csv"  #maze的檔案名稱
 df = pd.read_csv(file_path, header=0)
 df.columns = ["index", "North", "South", "West", "East", "ND", "SD", "WD", "ED"]
 df = df[df["index"] != "index"]
@@ -154,8 +154,9 @@ def compute_total_time(path,t_f,t_l,t_b,t_r):
 def best_path_within_time(start_node, treasures, scores, path_cache, time_cache, max_time):
     best_path = []
     best_score = 0
-    best_total_time = 0
+    best_total_time = float('inf')
     best_treasure_path = []
+    best_score_sequence = []
 
     for r in range(1, len(treasures)+1):
         for subset in combinations(treasures, r):
@@ -166,6 +167,7 @@ def best_path_within_time(start_node, treasures, scores, path_cache, time_cache,
                 total_time = 0
                 visited = set()
                 valid = True
+                score_sequence = []
 
                 for target in perm:
                     if (current, target) not in path_cache:
@@ -182,31 +184,48 @@ def best_path_within_time(start_node, treasures, scores, path_cache, time_cache,
                     total_time += segment_time
                     temp_path += segment[1:]
                     if target not in visited:
-                        total_score += scores.get(target, 0)
+                        score = scores.get(target, 0)
+                        total_score += score
+                        score_sequence.append(score)
                         visited.add(target)
+                    else:
+                        score_sequence.append(0)
                     current = target
 
-                if valid and total_score > best_score:
+                if not valid:
+                    continue
+
+                # 排序順序：
+                # 1. 總分數高
+                # 2. 寶藏分數順序比（類似字典序）
+                # 3. 總時間少
+                if (total_score > best_score) or \
+                   (total_score == best_score and score_sequence > best_score_sequence) or \
+                   (total_score == best_score and score_sequence == best_score_sequence and total_time < best_total_time):
                     best_path = temp_path
                     best_score = total_score
                     best_total_time = total_time
-                    best_treasure_path = list(perm) 
+                    best_treasure_path = list(perm)
+                    best_score_sequence = score_sequence
 
     return {
         "最佳路徑": best_path,
         "方向列": get_relative_direction_list(best_path),
         "總分數": best_score,
         "總時間": best_total_time,
-        "拜訪寶藏順序": best_treasure_path 
+        "拜訪寶藏順序": best_treasure_path
     }
+ 
+
+
 
  
 
 # === 執行範例 ===
-t_f = 0.5  
-t_l = 1       
-t_r = 1
-t_b = 2   
+t_f = 1
+t_l = 0.5    
+t_r = 0.5
+t_b = 1 
 
 start_node = 24
 cols = 6
