@@ -19,10 +19,10 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
-TEAM_NAME = "王立淼"
+TEAM_NAME = "讓立淼再次偉大"
 SERVER_URL = "http://140.112.175.18:5000/" #"fakeUID.csv"
 MAZE_FILE = "big_maze_113.csv"
-BT_PORT = "COM9"
+BT_PORT = "COM11"
 ACTION_LIST = "cross_list.txt"#"action_list.txt"
 
 
@@ -44,6 +44,8 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
     #maze = Maze(maze_file)
     # point = ScoreboardServer(TEAM_NAME, SERVER_URL)
     # point = ScoreboardFake("your team name", "fakeUID.csv") # for local testing
+    dirc = get_path()
+    print(dirc)
     try:
         interface = BTInterface(port=bt_port)
         
@@ -51,11 +53,14 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
         # TODO : Initialize necessary variables
 
         if mode == "0":
+            # dirc = get_path()
+            # print(dirc)
             log.info("Mode 0: For treasure-hunting")
             scoreboard = ScoreboardServer(TEAM_NAME, SERVER_URL)
+            # scoreboard = ScoreboardFake(TEAM_NAME,"fakeUID.csv")
             # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
-            dirc = get_path()
-            print(dirc)
+            
+            
             dirc.append('S')
             action_index=0
             for i in range(3):
@@ -71,11 +76,12 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                 if msg==None:
                     continue
                 elif len(msg) == 8:
-                    score, time_remaining = scoreboard.add_UID(msg)
+                    for i in range(5):
+                        score, time_remaining = scoreboard.add_UID(msg)
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                elif msg=="1":
+                elif msg=="9F":
                     # print("NODE")
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])
@@ -117,11 +123,12 @@ def main(mode: int, bt_port: str, team_name: str, maze_file: str):
                 if msg==None:
                     continue
                 elif len(msg) == 8:
-                    score, time_remaining = scoreboard.add_UID(msg)
+                    for i in range(5):
+                        score, time_remaining = scoreboard.add_UID(msg)
                     current_score = scoreboard.get_current_score()
                     log.info(f"Score from UID: {score}, Time left: {time_remaining}")
                     log.info(f"Current score: {current_score}")
-                elif msg=="1":
+                elif msg=="9F":
                     # print("NODE")
                     if action_index < len(dirc):  # 防止 index 超出範圍
                         interface.send_action(dirc[action_index])

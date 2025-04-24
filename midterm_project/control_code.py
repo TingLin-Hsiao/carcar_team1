@@ -7,7 +7,7 @@ start_time = time.time()
 
 
 # === 讀取 CSV 並建立圖 ===
-file_path = "C:/Users/edwin/carcar_team1/midterm_project/big_maze_113.csv"  #maze的檔案名稱
+file_path = "big_maze_113.csv"  #maze的檔案名稱
 df = pd.read_csv(file_path, header=0)
 df.columns = ["index", "North", "South", "West", "East", "ND", "SD", "WD", "ED"]
 df = df[df["index"] != "index"]
@@ -232,10 +232,10 @@ cols = 6
 rows = 8
 treasures = [8,12,14,18, 30,31,43,44,48]
 
-max_time = 70   #最大時間
+max_time = 90   #最大時間
 
 
-def get_path(t_f=0.5, t_l=1, t_r=1, t_b=2,start_node=24,cols=6,rows=8,treasures= [8,12,14,18, 30,31,43,44,48],max_time=70):
+def get_path(t_f=1, t_l=0.5, t_r=0.5, t_b=1,start_node=24,cols=6,rows=8,treasures= [8,14,18,30,31,43,44,48],max_time=90):
     scores = compute_scores(start_node, treasures ,cols ,rows)
     all_nodes = [start_node] + treasures
     all_pairs , time_cache = build_all_pairs_shortest_paths_with_time(graph, all_nodes,t_f,t_l,t_b,t_r)

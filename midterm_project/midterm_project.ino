@@ -194,7 +194,7 @@ void AskNextAction(){
     // byte msg[] = "Y"; 
     // byte len = sizeof(msg) - 1;
     // send_byte(msg, len);
-    send_msg(1);
+    send_msg("Y");
     delay(5);
 }
 void left_turning(){
@@ -260,10 +260,11 @@ void returning(){
 void straight(){
   int IR_A1 = digitalRead(digitalPin1);
   int IR_A5 = digitalRead(digitalPin5);
-  while(IR_A1&&IR_A5){
+  while((IR_A1||IR_A5)!=1){
     IR_A1 = digitalRead(digitalPin1);
     IR_A5 = digitalRead(digitalPin5);
   }
+  delay(50);
 
 
 }
@@ -326,7 +327,7 @@ void NextAction(double v){
           MotorWriting(0, 0);
           break;
       case GO:
-          delay(1000);
+          delay(50);
           Serial.println("GO");
           MotorWriting(v,v);
           delay(250);

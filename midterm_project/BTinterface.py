@@ -43,6 +43,10 @@ class BTInterface:
         if len(uid) == 8:
             print(f"Received UID: {uid}")
             return uid
+        if len(uid) ==7:
+            uid = "0"+uid
+            print(f'Received UID: {uid}')
+            return uid
         elif uid!="0":
             print(f'enter node, message={uid}')
             return uid       
